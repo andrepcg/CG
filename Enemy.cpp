@@ -29,7 +29,7 @@ Enemy::Enemy(float x, float y, float z, QuadTree *q, CollisionGrid *g){
 	ATTACK_DELAY = 200;
 	ATTACK_RADIUS = 70;
 
-	playerLOS = Rect(x - PLAYER_LOS_RADIUS / 2.0f, y - PLAYER_LOS_RADIUS / 2.0f, PLAYER_LOS_RADIUS, PLAYER_LOS_RADIUS);
+	playerLOS = Circle(pos.x, pos.z, PLAYER_LOS_RADIUS / 2.0f);
 
 	boundingBox = Rect(x - BOUNDING_BOX_SIZE / 2.0f, z - BOUNDING_BOX_SIZE / 2.0f, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE);
 
@@ -59,8 +59,8 @@ void Enemy::update(Player *p, float deltaTime){
 }
 
 void Enemy::updateBoxes(){
-	playerLOS.x = pos.x - PLAYER_LOS_RADIUS / 2.0f;
-	playerLOS.y = pos.z - PLAYER_LOS_RADIUS / 2.0f;
+	playerLOS.x = pos.x;
+	playerLOS.y = pos.z;
 
 	boundingBox.x = pos.x - BOUNDING_BOX_SIZE / 2.0f;
 	boundingBox.y = pos.z - BOUNDING_BOX_SIZE / 2.0f;

@@ -40,6 +40,8 @@ public:
 
 	int completedMissions;
 
+	bool drawCollisionCircle, drawLOS;
+
 private:
 	long lastMissionStartTime;
 	long lastMissionEndTime;

@@ -35,7 +35,7 @@ public:
 
 	void setQuadTree(QuadTree *q);
 	void setGrid(CollisionGrid *g);
-
+	Circle getRepelCircle();
 
 protected:
 	bool isP = false;

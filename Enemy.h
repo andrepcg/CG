@@ -16,7 +16,7 @@ public:
 	void update(Player *p, float deltaTime);
 
 	vec2f externalForce;
-	Rect playerLOS;
+	Circle playerLOS;
 	Rect walkToPos;
 
  	void renderMesh();

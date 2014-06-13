@@ -126,3 +126,6 @@ void Entity::setQuadTree(QuadTree *q){
 void Entity::setGrid(CollisionGrid *g){
 	grid = g;
 }
+Circle Entity::getRepelCircle(){
+	return repelCircle;
+}

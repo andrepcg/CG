@@ -79,13 +79,12 @@ void Player::move(bool *keys, float deltaTime){
 			jumped = true;
 		}
 	}
-
+	
 	this->moveBy(v.x, v.y);
 
 	if (jumped){
-
 		pos.y += jumpVel * deltaTime;
-		jumpVel += gravity;
+		jumpVel += gravity * deltaTime;
 	}
 
 	if (jumped && pos.y <= 0.1){
