@@ -39,6 +39,10 @@ public:
 
 	int itemInventory[10];
 
+	MissionBonus currentlyUsing;
+	int FORCE_FIELD_DURATION = 10; // s
+	long forceFieldStartTime;
+
 private:
 	void updateBoxes();
 	void move(bool *keys, float deltaTime);

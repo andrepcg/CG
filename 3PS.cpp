@@ -277,6 +277,10 @@ float updateT1, updateT2;
 const char *vida = "Health: %.1f%%";
 const char *vel =  "Speed:  %.1f";
 const char *ataq = "Attack: %.1f";
+const char *jmp =  "Jump:   %.1f";
+
+const char *jde = "(Z) JDE: %d";
+const char *ff = "(X) FF: %d";
 
 
 void DrawHUD(){
@@ -298,13 +302,22 @@ void DrawHUD(){
 	renderBitmapString(10, 60, updatet, RGBf(0.0f, 1.0f, 0.0f));
 
 	sprintf(updatet, vida, player->getHealth());
-	renderBitmapString(660, 540, updatet, RGBf(0.0f, 1.0f, 0.0f));
+	renderBitmapString(660, 530, updatet, RGBf(0.0f, 1.0f, 0.0f));
 
 	sprintf(updatet, vel, player->BASE_MOVE_SPEED + player->speed_bonus);
-	renderBitmapString(660, 560, updatet, RGBf(0.0f, 1.0f, 0.0f));
+	renderBitmapString(660, 550, updatet, RGBf(0.0f, 1.0f, 0.0f));
 
 	sprintf(updatet, ataq, player->BASE_ATTACK_DAMAGE + player->attack_bonus);
-	renderBitmapString(660, 580, updatet, RGBf(0.0f, 1.0f, 0.0f));
+	renderBitmapString(660, 570, updatet, RGBf(0.0f, 1.0f, 0.0f));
+
+	sprintf(updatet, jmp, player->BASE_JUMP_V + player->jump_bonus);
+	renderBitmapString(660, 590, updatet, RGBf(0.0f, 1.0f, 0.0f));
+
+	sprintf(updatet, jde, player->itemInventory[JUMP_DROP_EXPLOSION]);
+	renderBitmapString(10, 590, updatet, RGBf(1.0f, 1.0f, 0.0f));
+
+	sprintf(updatet, ff, player->itemInventory[FORCE_FIELD]);
+	renderBitmapString(110, 590, updatet, RGBf(1.0f, 1.0f, 0.0f));
 	
 	glPopMatrix();
 	resetPerspectiveProjection();

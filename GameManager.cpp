@@ -84,6 +84,9 @@ void GameManager::update(float deltaTime){
 
 void GameManager::applyBonusPlayer(){
 	for (int i = 0; i < bonus.size(); i++){
+
+		std::cout << "Bonus: " << bonus[i].b << std::endl;
+
 		if (bonus[i].b == DAMAGE_INCREASE)
 			player->attack_bonus += player->BASE_ATTACK_DAMAGE * bonus[i].amount;
 
@@ -97,8 +100,11 @@ void GameManager::applyBonusPlayer(){
 			player->setHealth(player->getHealth() + player->BASE_HEALTH * bonus[i].amount);
 
 		// TODO one time bonus
-		else if (bonus[i].b == JUMP_LAND_EXPLOSION)
-			player->itemInventory[JUMP_LAND_EXPLOSION]++;
+		else if (bonus[i].b == JUMP_DROP_EXPLOSION)
+			player->itemInventory[JUMP_DROP_EXPLOSION]++;
+
+		else if (bonus[i].b == FORCE_FIELD)
+			player->itemInventory[FORCE_FIELD]++;
 	}
 }
 
@@ -134,8 +140,8 @@ void GameManager::drawMission(){
 		DrawCircle(missionObjective.x, missionObjective.y, 1, missionObjective.radius, 32, RGBf(1, 0, 0));
 		glPushMatrix();
 		glColor3f(1.0,0.0,0.0);
-		glTranslatef(missionObjective.x, 20, missionObjective.y);
-		glutSolidCube(30);
+		glTranslatef(missionObjective.x, 10, missionObjective.y);
+		glutSolidCube(40);
 		glPopMatrix();
 	}
 }

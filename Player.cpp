@@ -26,7 +26,7 @@ void Player::update(bool *keys, float deltaTime){
 
 	move(keys, deltaTime);
 
-	
+	// TODO usar o force field temporariamente -> contagem de tempo em que o REPEL_SIZE está maior
 
 	updateBoxes();
 }
