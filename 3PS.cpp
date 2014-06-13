@@ -37,16 +37,6 @@ int height = 600;
 double midWindowX = width / 2;
 double midWindowY = height / 2;
 
-float Xposition = 500;
-float Yposition = 40;
-float Zposition = 500;
-
-float Xrotation = 45;
-float Yrotation = 180;
-float Zrotation = 0;
-
-float XRotationRadius;
-float YRotationRadius;
 
 bool functionKey = false;
 bool keyStates[256];
@@ -295,6 +285,8 @@ void DrawHUD(){
 	//sprintf(pos, "X: %.2f, Y: %.2f, Z: %.2f", player->getPos().x, player->getPos().y, player->getPos().z);
 	//renderBitmapString(10, 40, pos, RGBf(1.0f, 0.0f, 0.0f));
 
+
+	// TODO hud adapta-se ao tamanho do ecra
 	sprintf(updatet, "Update time: %.2f ms", updateT2 - updateT1);
 	renderBitmapString(10, 40, updatet, RGBf(1.0f, 0.0f, 0.0f));
 
@@ -517,6 +509,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	else{
 
+
 		if (action == GLFW_PRESS)
 			keyStates[key] = true;
 
@@ -533,16 +526,19 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 
 		if (key == GLFW_KEY_B && action == GLFW_RELEASE){
-			// TODO draw quadtree
 			debugKeys[GLFW_KEY_B] = !debugKeys[GLFW_KEY_B];
 		}
 
 		if (key == GLFW_KEY_N && action == GLFW_RELEASE){
-			// TODO draw enemy LOS and collision circle
 			debugKeys[GLFW_KEY_N] = !debugKeys[GLFW_KEY_N];
 			gameManager->drawCollisionCircle = !gameManager->drawCollisionCircle;
 			gameManager->drawLOS = !gameManager->drawLOS;
 		}
+
+		if (key == GLFW_KEY_X && action == GLFW_RELEASE){
+			player->eventKeys[GLFW_KEY_X] = true;
+		}
+
 
 // 		if (key == GLFW_KEY_K && action == GLFW_RELEASE)
 // 			player->camera->firstPerson = !player->camera->firstPerson;

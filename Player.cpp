@@ -4,19 +4,24 @@ Player::Player(XYZ &p)
 {
 	pos = XYZ(p.x, p.y, p.z);
 
-	REPEL_SIZE = 60;
 	v = vec2f(0, 0);
 	REPEL_SIZE = 80;
 	BOUNDING_BOX_SIZE = 30;
 
+	ATTACK_RADIUS = REPEL_SIZE;
+	ORIGINAL_REPEL_RADIUS = REPEL_SIZE;
+	ORIGINAL_ATTACK_RADIUS = ATTACK_RADIUS;
+	ORIGINAL_REPEL_FORCE = REPEL_FORCE;
+
 	isP = true;
 
-	ATTACK_RADIUS = REPEL_SIZE;
+	currentlyUsing = NONE;
 
 	health = BASE_HEALTH;
 
-	boundingBox = Rect(p.x - BOUNDING_BOX_SIZE / 2.0f, p.z - BOUNDING_BOX_SIZE / 2.0f, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE);
+	itemInventory[FORCE_FIELD] = 2;
 
+	boundingBox = Rect(p.x - BOUNDING_BOX_SIZE / 2.0f, p.z - BOUNDING_BOX_SIZE / 2.0f, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE);
 	repelCircle = Circle(pos.x, pos.z, REPEL_SIZE / 2);
 	attackCircle = Circle(pos.x, pos.z, ATTACK_RADIUS / 2);
 }
@@ -24,11 +29,34 @@ Player::Player(XYZ &p)
 void Player::update(bool *keys, float deltaTime){
 	repelEntities();
 
+	processEventKeys();
 	move(keys, deltaTime);
 
 	// TODO usar o force field temporariamente -> contagem de tempo em que o REPEL_SIZE está maior
+	if (currentlyUsing == FORCE_FIELD){
+		long t = currentTimeMillis();
+		if (t - forceFieldStartTime > (FORCE_FIELD_DURATION * 1000)){
+			REPEL_SIZE = ORIGINAL_REPEL_RADIUS;
+			ATTACK_RADIUS = ORIGINAL_ATTACK_RADIUS;
+			REPEL_FORCE = ORIGINAL_REPEL_FORCE;
+			currentlyUsing = NONE;
+		}
+	}
 
 	updateBoxes();
+}
+
+void Player::processEventKeys(){
+	if (eventKeys[GLFW_KEY_X]){
+		if (itemInventory[FORCE_FIELD] > 0){
+			forceFieldStartTime = currentTimeMillis();
+			currentlyUsing = FORCE_FIELD;
+			REPEL_SIZE = ATTACK_RADIUS = 250;
+			REPEL_FORCE = 1000;
+			itemInventory[FORCE_FIELD]--;
+		}
+		eventKeys[GLFW_KEY_X] = false;
+	}
 }
 
 void Player::updateBoxes(){
@@ -38,6 +66,9 @@ void Player::updateBoxes(){
 
 	repelCircle.x = attackCircle.x = pos.x;
 	repelCircle.y = attackCircle.y = pos.z;
+
+	repelCircle.radius = REPEL_SIZE / 2.0f;
+	attackCircle.radius = ATTACK_RADIUS / 2.0f;
 
 }
 
@@ -79,6 +110,7 @@ void Player::move(bool *keys, float deltaTime){
 			jumped = true;
 		}
 	}
+
 	
 	this->moveBy(v.x, v.y);
 
@@ -107,6 +139,9 @@ void Player::attack(Entity *e, float dmg){
 
 void Player::render(){
 	camera->render();
+
+	if (currentlyUsing == FORCE_FIELD)
+		DrawCircle(pos.x, pos.z, 2, REPEL_SIZE / 2.0, 20, RGBf(0, 0, 1));
 
 	// TODO player model
 }

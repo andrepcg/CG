@@ -11,6 +11,7 @@ enum MissionEstado
 
 enum MissionBonus
 {
+	NONE,
 	JUMP_INCREASE,
 	//DAMAGE_TEMP,
 	//SPEED_TEMP,

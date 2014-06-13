@@ -29,6 +29,7 @@ public:
 	float jump_bonus;
 
 	void receiveDamage(float d);
+	void processEventKeys();
 
 	const float BASE_MOVE_SPEED = 200.0f;
 	const float BASE_HEALTH = 100.0f;
@@ -43,6 +44,8 @@ public:
 	int FORCE_FIELD_DURATION = 10; // s
 	long forceFieldStartTime;
 
+	bool eventKeys[256];
+
 private:
 	void updateBoxes();
 	void move(bool *keys, float deltaTime);
@@ -50,9 +53,13 @@ private:
 	float gravity = -1100;
 	bool jumped;
 
-	const int JUMP_DELAY = 500; // MS
+	const int JUMP_DELAY = 200; // MS
 
 	long lastJumpLand;
+
+	float ORIGINAL_REPEL_RADIUS;
+	float ORIGINAL_ATTACK_RADIUS;
+	float ORIGINAL_REPEL_FORCE;
 
 	
 };

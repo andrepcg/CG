@@ -19,7 +19,7 @@ GameManager::GameManager(Rect gameBounds, Player *p){
 	mesh = new Mesh();
 	mesh->LoadMesh("./Content/models/puddi.obj");
 
-	for (int i = 0; i < 100; i++){
+	for (int i = 0; i < 700; i++){
 		entities.push_back(new Enemy(rand() % quad->BoundingBox.w, 0, rand() % quad->BoundingBox.h, quad, collisionGrid));
 		entities[i]->setMesh(mesh);
 	}

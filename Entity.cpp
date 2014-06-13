@@ -62,10 +62,6 @@ void Entity::repelEntities(){
 
 	std::vector<Entity*> closeBy = quad->queryRange(attackCircle);
 
-// 	Circle c = Circle(pos.x, pos.z, REPEL_SIZE / 2);
-// 	Circle attackRange = c;
-// 	attackRange.radius += 250;
-
 	for (int i = 0; i < closeBy.size(); i++){
 
 		if (!this->isPlayer() && closeBy[i]->isPlayer()){
@@ -75,7 +71,7 @@ void Entity::repelEntities(){
 		}
 
 
-		if (repelCircle.Contains(closeBy[i]->pos.getXZ()))
+		if (repelCircle.radius == attackCircle.radius || repelCircle.Contains(closeBy[i]->pos.getXZ()))
 			repel(closeBy[i]);
 
 
@@ -92,6 +88,7 @@ void Entity::repel(Entity *e){
 	float dx = pos.x - e->pos.x;
 	float dy = pos.z - e->pos.z;
 	float distance = sqrt(dx*dx + dy*dy);
+	//float distance = dx*dx + dy*dy;
 
 	float force = floor(REPEL_FORCE / distance);
 
