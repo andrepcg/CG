@@ -10,16 +10,16 @@ GameManager::GameManager(Rect gameBounds, Player *p){
 	estado = DELAY_BEFORE_MISSION;
 	playerWasInsideRadius = false;
 
-	quad = new QuadTree(Rect(0, 0, 8192, 8192));
+	quad = new QuadTree(gameBounds);
 	quad->clear();
 
-	collisionGrid = new CollisionGrid(Rect(0, 0, 8192, 8192), 64);
+	collisionGrid = new CollisionGrid(gameBounds, 64);
 	collisionGrid->setCell(20, 20, BLOCKED);
 
 	mesh = new Mesh();
 	mesh->LoadMesh("./Content/models/puddi.obj");
 
-	for (int i = 0; i < 700; i++){
+	for (int i = 0; i < 200; i++){
 		entities.push_back(new Enemy(rand() % quad->BoundingBox.w, 0, rand() % quad->BoundingBox.h, quad, collisionGrid));
 		entities[i]->setMesh(mesh);
 	}

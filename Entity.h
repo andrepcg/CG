@@ -47,7 +47,7 @@ protected:
 
 	float _moveX, _moveY;
 
-	int REPEL_FORCE = 70;
+	int REPEL_FORCE = 30;
 	int REPEL_SIZE = 50;
 	int BOUNDING_BOX_SIZE;
 	int ATTACK_RADIUS;
