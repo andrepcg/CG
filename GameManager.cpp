@@ -98,7 +98,7 @@ void GameManager::applyBonusPlayer(){
 
 		// TODO one time bonus
 		else if (bonus[i].b == JUMP_LAND_EXPLOSION)
-			player->oneTimeUseBonus[JUMP_LAND_EXPLOSION] += 1;
+			player->itemInventory[JUMP_LAND_EXPLOSION]++;
 	}
 }
 
@@ -130,8 +130,14 @@ void GameManager::newRandomMission(){
 }
 
 void GameManager::drawMission(){
-	if (estado == WAITING_FOR_MISSION_COMPLETE)
+	if (estado == WAITING_FOR_MISSION_COMPLETE){
 		DrawCircle(missionObjective.x, missionObjective.y, 1, missionObjective.radius, 32, RGBf(1, 0, 0));
+		glPushMatrix();
+		glColor3f(1.0,0.0,0.0);
+		glTranslatef(missionObjective.x, 20, missionObjective.y);
+		glutSolidCube(30);
+		glPopMatrix();
+	}
 }
 
 void GameManager::DrawEntities() {
@@ -146,10 +152,13 @@ void GameManager::DrawEntities() {
 			entities[i]->renderMesh();
 
 
-	// bounding box
-	//for (int i = 0; i < entities.size(); i++)
-	//drawRectFloor(entities[i]->repelBox.x, entities[i]->repelBox.y, entities[i]->repelBox.w, entities[i]->repelBox.h, RGBf(1.0, 0.0, 0.0));
+	if (drawCollisionCircle)
+		for (int i = 0; i < entities.size(); i++)
+			DrawCircle(entities[i]->getRepelCircle().x, entities[i]->getRepelCircle().y, 0, entities[i]->getRepelCircle().radius, 10, RGBf(1.0, 0.0, 0.0));
 
+	if (drawLOS)
+		for (int i = 0; i < entities.size(); i++)
+			DrawCircle(entities[i]->playerLOS.x, entities[i]->playerLOS.y, 0, entities[i]->playerLOS.radius, 20, RGBf(1.0, 1.0, 0.0));
 
 
 }

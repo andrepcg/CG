@@ -87,6 +87,7 @@ Rect bounds = Rect(0, 0, 8192, 8192);
 
 bool performance = true;
 
+bool debugKeys[256];
 
 
 void setOrthographicProjection() {
@@ -455,6 +456,16 @@ void drawSkybox(float x, float y, float z, float width, float height, float leng
 
 }
 
+void debugRender(){
+	if (debugKeys[GLFW_KEY_B]){
+		DrawTree(gameManager->quad);
+	}
+
+	if (debugKeys[GLFW_KEY_N]){
+		
+	}
+}
+
 void render(){
 
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -470,9 +481,10 @@ void render(){
  	drawFilledRect(0, -11, 0, 8192, 8192, RGBf(0.5, 0.5, 0.5));
  	drawCollisionGrid();
 
-	//DrawTree(quad);
 
 	gameManager->drawMission();
+
+	debugRender();
 	
 
 	drawSkybox(0, 0, 0, 20000, 20000, 20000);
@@ -501,8 +513,23 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_P && action == GLFW_RELEASE)
 			paused = !paused;
 
-		if (key == GLFW_KEY_1 && action == GLFW_RELEASE)
+		if (key == GLFW_KEY_1 && action == GLFW_RELEASE){	
 			performance = !performance;
+			gameManager->performance = !gameManager->performance;
+		
+		}
+
+		if (key == GLFW_KEY_B && action == GLFW_RELEASE){
+			// TODO draw quadtree
+			debugKeys[GLFW_KEY_B] = !debugKeys[GLFW_KEY_B];
+		}
+
+		if (key == GLFW_KEY_N && action == GLFW_RELEASE){
+			// TODO draw enemy LOS and collision circle
+			debugKeys[GLFW_KEY_N] = !debugKeys[GLFW_KEY_N];
+			gameManager->drawCollisionCircle = !gameManager->drawCollisionCircle;
+			gameManager->drawLOS = !gameManager->drawLOS;
+		}
 
 // 		if (key == GLFW_KEY_K && action == GLFW_RELEASE)
 // 			player->camera->firstPerson = !player->camera->firstPerson;

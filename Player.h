@@ -37,13 +37,13 @@ public:
 
 	void attack(Entity *e, float dmg);
 
-	MissionBonus oneTimeUseBonus[10];
+	int itemInventory[10];
 
 private:
 	void updateBoxes();
 	void move(bool *keys, float deltaTime);
 	float jumpVel;
-	float gravity = -1.5;
+	float gravity = -1100;
 	bool jumped;
 
 	const int JUMP_DELAY = 500; // MS
