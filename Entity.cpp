@@ -127,3 +127,11 @@ void Entity::setGrid(CollisionGrid *g){
 Circle Entity::getRepelCircle(){
 	return repelCircle;
 }
+
+void Entity::setYVel(float v){
+	yVel = v;
+}
+
+void Entity::setAir(bool t){
+	air = t;
+}

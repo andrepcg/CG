@@ -31,6 +31,8 @@ Enemy::Enemy(float x, float y, float z, QuadTree *q, CollisionGrid *g){
 
 	playerLOS = Circle(pos.x, pos.z, PLAYER_LOS_RADIUS / 2.0f);
 
+	color = RGBf(float(rand()) / RAND_MAX, float(rand()) / RAND_MAX, float(rand()) / RAND_MAX);
+
 	boundingBox = Rect(x - BOUNDING_BOX_SIZE / 2.0f, z - BOUNDING_BOX_SIZE / 2.0f, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE);
 
 	repelCircle = Circle(pos.x, pos.z, REPEL_SIZE / 2);
@@ -51,11 +53,58 @@ void Enemy::update(Player *p, float deltaTime){
 	v.x += externalForce.x;
 	v.y += externalForce.y;
 
-	moveBy(clamp(v.x, -MAX_SPEED, MAX_SPEED), clamp(v.y, -MAX_SPEED, MAX_SPEED));
+	mediaVelocidade();
+
+
+	if (air){
+		yVel += gravity * deltaTime;
+		pos.y += yVel * deltaTime;
+	}
+
+	if (air && pos.y <= 0.1){
+		yVel = 0;
+		pos.y = 0;
+		air = false;
 	
-	externalForce.x = externalForce.y = 0;
+	}
+
+	float d = deltaTime * 35.0f;
+	if (fabs(v.x) > d || fabs(v.y) > d)
+		anguloDir = -ToDegree(atan(v.y / v.x));
+
+	moveBy(clamp(v.x, -MAX_SPEED, MAX_SPEED), clamp(v.y, -MAX_SPEED, MAX_SPEED));
+
+	
+	
+	externalForce.x *= 0.75f;
+	externalForce.y *= 0.75f;
+
+	if (externalForce.x <= 0.1f)
+		externalForce.x = 0;
+
+	if (externalForce.y <= 0.1f)
+		externalForce.y = 0;
 
 	updateBoxes();
+}
+
+void Enemy::mediaVelocidade(){
+	velAvg[curAvg][0] = v.x;
+	velAvg[curAvg][1] = v.y;
+	curAvg++;
+
+	float a1 = 0.0f;
+	float a2 = 0.0f;
+	for (int i = 0; i < AVG_SIZE; i++){
+		a1 += velAvg[i][0];
+		a2 += velAvg[i][1];
+	}
+
+	a1 /= AVG_SIZE;
+	a2 /= AVG_SIZE;
+
+	if (curAvg == AVG_SIZE - 1)
+		curAvg = 0;
 }
 
 void Enemy::updateBoxes(){
@@ -122,8 +171,9 @@ void Enemy::renderMesh(){
 
 void Enemy::renderCube(){
 	glPushMatrix();
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glTranslated(pos.x, 0, pos.z);
+	glColor3f(color.r, color.g, color.b);
+	glTranslated(pos.x, pos.y, pos.z);
+	glRotatef(anguloDir, 0.0, 1.0, 0.0);
 	glutSolidCube(20);
 	glPopMatrix();
 

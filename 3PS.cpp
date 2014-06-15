@@ -40,11 +40,10 @@ double midWindowY = height / 2;
 
 
 bool functionKey = false;
-bool keyStates[256];
+bool keyStates[512];
 bool rato[2];
 
 bool WarpingMouse = false;
-bool keySpecialStates[256];
 
 bool first_person = true;
 float cRadius = 200.0f; // our radius distance from our character
@@ -82,6 +81,7 @@ bool debugKeys[256];
 
 
 mar::Model *treeModel;
+
 
 void setOrthographicProjection() {
 	glMatrixMode(GL_PROJECTION);
@@ -236,9 +236,9 @@ void initGame(void){
 
 	player->camera = camera;
 
-	char *texturas[6] = { "Content/SunSetRight2048.png", "Content/SunSetLeft2048.png", "Content/SunSetUp2048.png", "Content/SunSetDown2048.png", "Content/SunSetFront2048.png", "Content/SunSetBack2048.png" };
+	char *texturas[7] = { "Content/SunSetRight2048.png", "Content/SunSetLeft2048.png", "Content/SunSetUp2048.png", "Content/SunSetDown2048.png", "Content/SunSetFront2048.png", "Content/SunSetBack2048.png" ,"Content/crate.jpg"};
 	
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 7; i++)
 		loadTexture(texturas[i], 0, SkyboxTexture, i);
 
 	treeModel = new mar::Model();
@@ -301,6 +301,7 @@ const char *jmp =  "Jump:   %.1f";
 
 const char *jde = "(Z) JDE: %d";
 const char *ff = "(X) FF: %d";
+const char *crate = "(C) BOX: %d";
 
 
 void DrawHUD(){
@@ -340,6 +341,9 @@ void DrawHUD(){
 
 	sprintf(updatet, ff, player->itemInventory[FORCE_FIELD]);
 	renderBitmapString(110, 590, updatet, RGBf(1.0f, 1.0f, 0.0f));
+
+	sprintf(updatet, crate, player->itemInventory[BOX_CRATE]);
+	renderBitmapString(200, 590, updatet, RGBf(1.0f, 1.0f, 0.0f));
 	
 	glPopMatrix();
 	resetPerspectiveProjection();
@@ -394,12 +398,22 @@ void update(){
 }
 
 void drawTree(Tree t){
+
+	glColor3f(0.133, 0.431, 0.04);
 	glPushMatrix();
-	glTranslatef(t.x, -10, t.z);
-	glScalef(3.0, 3.0, 3.0);
-	glRotatef(t.ang, 0.0, 1.0, 0.0);
-	//treeModel->render(false);
-	arvore->Render();
+	
+	if (!performance){
+		glTranslatef(t.x, -10, t.z);
+		glScalef(3.0, 3.0, 3.0);
+		glRotatef(t.ang, 0.0, 1.0, 0.0);
+		//treeModel->render(false);
+		arvore->Render();
+	}
+	else{
+		glTranslatef(t.x, 70, t.z);
+		glScalef(1.0, 8.0, 1.0);
+		glutSolidCube(20);
+	}
 	glPopMatrix();
 }
 
@@ -415,11 +429,51 @@ void drawCollisionGrid(){
 		for (int x = 0; x < gameManager->collisionGrid->gridCols; x++){
 			if (gameManager->collisionGrid->getCell(x, z) == BLOCKED){
 				drawFilledRect(x * gameManager->collisionGrid->cellSize, -10, z * gameManager->collisionGrid->cellSize, gameManager->collisionGrid->cellSize, gameManager->collisionGrid->cellSize, RGBf(1.0, 0.0, 0.0));
-				//renderTree(x * gameManager->collisionGrid->cellSize + gameManager->collisionGrid->cellSize / 2.0, -10, z * gameManager->collisionGrid->cellSize + gameManager->collisionGrid->cellSize / 2.0, randInt(0, 180));
 			}
 		}
 	}
 
+}
+
+void drawCrate(float x, float y, float z, float width, float height, float length){
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, SkyboxTexture[CRATE]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, z);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y, z + length);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y + height, z + length);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y + height, z);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, z + length);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y, z + length);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(x + width, y + height, z + length);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y + height, z + length);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y, z + length);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y, z);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(x + width, y + height, z);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(x + width, y + height, z + length);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y + height, z);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(x + width, y + height, z);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y, z);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, z);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y + height, z);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y + height, z + length);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y + height, z + length);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y + height, z);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
 }
 
 
@@ -428,6 +482,7 @@ void drawSkybox(float x, float y, float z, float width, float height, float leng
 	glDisable(GL_LIGHTING);
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glColor3f(1.0, 1.0, 1.0);
+	glEnable(GL_TEXTURE_2D);
 	// Center the Skybox around the given x,y,z position
 	x = x - width / 2;
 	y = y - height / 2;
@@ -504,7 +559,6 @@ void debugRender(){
 }
 
 
-
 void render(){
 
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -515,14 +569,16 @@ void render(){
 
 	player->render();
 
-	
+	drawCrate(0, -10, 0, 64, 64, 64);
+
 	gameManager->DrawEntities();
 
+	// ground
 	glDisable(GL_LIGHTING);
  	drawFilledRect(0, -10, 0, 8192, 8192, RGBf(0.5, 0.5, 0.5));
 	glEnable(GL_LIGHTING);
 
- 	drawCollisionGrid();
+ 	//drawCollisionGrid();
 
 	gameManager->drawMission();
 
@@ -548,13 +604,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	else{
+		
+		
+			if (action == GLFW_PRESS)
+				keyStates[key] = true;
 
-
-		if (action == GLFW_PRESS)
-			keyStates[key] = true;
-
-		if (action == GLFW_RELEASE)
-			keyStates[key] = false;
+			if (action == GLFW_RELEASE)
+				keyStates[key] = false;
+		
 
 		if (key == GLFW_KEY_P && action == GLFW_RELEASE)
 			paused = !paused;
@@ -577,6 +634,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 		if (key == GLFW_KEY_X && action == GLFW_RELEASE){
 			player->eventKeys[GLFW_KEY_X] = true;
+		}
+
+		if (key == GLFW_KEY_Z && action == GLFW_RELEASE){
+			player->eventKeys[GLFW_KEY_Z] = true;
 		}
 
 
@@ -658,7 +719,6 @@ int main(int argc, char **argv)
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 
-	
 	//glfwWindowHint(GLFW_SAMPLES, 4);
 
 	window = glfwCreateWindow(800, 600, "Simple example", NULL, NULL);
@@ -676,10 +736,9 @@ int main(int argc, char **argv)
 
 	glfwSetCursorPos(window, midWindowX, midWindowY);
 
-	initGame();
 	initGL();
+	initGame();
 
-	
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, mouseControl);
@@ -694,10 +753,11 @@ int main(int argc, char **argv)
 		glfwPollEvents();
 	}
 
+	glfwDestroyWindow(window);
+	glfwTerminate();
+
 	gameManager->entities.clear();
 	gameManager->quad->clear();
 
-	glfwDestroyWindow(window);
-	glfwTerminate();
 	exit(EXIT_SUCCESS);
 }

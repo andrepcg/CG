@@ -31,7 +31,7 @@ public:
 	void receiveDamage(float d);
 	void processEventKeys();
 
-	const float BASE_MOVE_SPEED = 200.0f;
+	const float BASE_MOVE_SPEED = 1000.0f;
 	const float BASE_HEALTH = 100.0f;
 	const float BASE_ATTACK_DAMAGE = 20.0f;
 	const float BASE_JUMP_V = 450.0f; // 500
@@ -51,7 +51,7 @@ private:
 	void move(bool *keys, float deltaTime);
 	void headbob(float d);
 	float jumpVel;
-	float gravity = -1100;
+	
 	bool jumped;
 
 	const int JUMP_DELAY = 200; // MS
@@ -63,7 +63,9 @@ private:
 	float ORIGINAL_REPEL_FORCE;
 
 	int r;
-	
+	float extraGravity;
+	void jumpRepel();
+	void repelF(Entity *e);
 };
 
 

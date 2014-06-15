@@ -26,7 +26,8 @@ enum SkyTexture
 	SKYUP,
 	SKYDOWN,
 	SKYFRONT,
-	SKYBACK
+	SKYBACK,
+	CRATE
 };
 
 

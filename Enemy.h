@@ -23,6 +23,7 @@ public:
  	void renderCube();
 	void attack(Entity *e, float dmg);
 
+	float anguloDir;
 	
 
 private:
@@ -37,6 +38,11 @@ private:
 	
 	long lastAttackTime;
 	int ATTACK_DELAY; // ms
+
+	void mediaVelocidade();
+	static const int AVG_SIZE = 20;
+	float velAvg[AVG_SIZE][2];
+	int curAvg = 0;
 
 	bool m_x, m_y;
 };

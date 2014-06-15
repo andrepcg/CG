@@ -36,6 +36,10 @@ public:
 	void setQuadTree(QuadTree *q);
 	void setGrid(CollisionGrid *g);
 	Circle getRepelCircle();
+	float gravity = -1100;
+
+	void setYVel(float v);
+	void setAir(bool t);
 
 protected:
 	bool isP = false;
@@ -44,11 +48,15 @@ protected:
 	QuadTree *quad;
 	CollisionGrid *grid;
 	vec2f v;
+	float yVel;
+	bool air;
+
+	RGBf color;
 
 	float _moveX, _moveY;
 
-	int REPEL_FORCE = 30;
-	int REPEL_SIZE = 50;
+	int REPEL_FORCE = 40;
+	int REPEL_SIZE = 60;
 	int BOUNDING_BOX_SIZE;
 	int ATTACK_RADIUS;
 	

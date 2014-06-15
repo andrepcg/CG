@@ -4,6 +4,8 @@
 #include "Model.h"
 #include "Mesh.h"
 
+mar::Model *tesouro;
+
 GameManager::GameManager(Rect gameBounds, Player *p){
 	bounds = gameBounds;
 	player = p;
@@ -18,10 +20,10 @@ GameManager::GameManager(Rect gameBounds, Player *p){
 	collisionGrid->setCell(20, 20, BLOCKED);
 
 	mesh = new Mesh();
-
 	mesh->LoadMesh("./Content/models/puddi.obj");
 
-	
+	tesouro = new mar::Model();
+	tesouro->load("Content/models/", "treasure_chest.obj", "treasure_chest.mtl");
 
 	for (int i = 0; i < 200; i++){
 		entities.push_back(new Enemy(rand() % quad->BoundingBox.w, 0, rand() % quad->BoundingBox.h, quad, collisionGrid));
@@ -109,6 +111,9 @@ void GameManager::applyBonusPlayer(){
 
 		else if (bonus[i].b == FORCE_FIELD)
 			player->itemInventory[FORCE_FIELD]++;
+
+		else if (bonus[i].b == BOX_CRATE)
+			player->itemInventory[BOX_CRATE]++;
 	}
 }
 
@@ -144,9 +149,12 @@ void GameManager::drawMission(){
 		DrawCircle(missionObjective.x, missionObjective.y, 1, missionObjective.radius, 32, RGBf(1, 0, 0));
 		glPushMatrix();
 		glColor3f(1.0,0.0,0.0);
-		glTranslatef(missionObjective.x, 10, missionObjective.y);
-		glutSolidCube(40);
+		glTranslatef(missionObjective.x, -10, missionObjective.y);
+		//glutSolidCube(40);
+		glScalef(3.0, 3.0, 3.0);
+		tesouro->render(false);
 		glPopMatrix();
+		glDisable(GL_TEXTURE_2D);
 	}
 }
 

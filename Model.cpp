@@ -408,7 +408,7 @@ namespace mar
 
 			glBindTexture(GL_TEXTURE_2D, material.texture);
 
-			glBegin(GL_TRIANGLES);
+			glBegin(GL_POLYGON);
 			for (int j = 0; j<object_.faces.at(i).items.size(); ++j) // Each vertex
 			{
 				OBJFaceItem& item = object_.faces.at(i).items.at(j);
