@@ -24,6 +24,13 @@ enum MissionBonus
 
 };
 
+struct Tree
+{
+	float x, z;
+	float ang;
+	Tree(float X, float Z, float A) : x(X), z(Z), ang(A) { }
+};
+
 struct Bonus
 {
 	MissionBonus b;

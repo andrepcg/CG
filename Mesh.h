@@ -99,6 +99,8 @@ private:
 	GLuint m_VAO;
 	GLuint m_Buffers[6];
 
+	GLfloat *textura;
+
 	struct MeshEntry {
 		MeshEntry()
 		{
@@ -118,6 +120,7 @@ private:
 	std::vector<MeshEntry> m_Entries;
 	std::vector<Texture*> m_Textures;
 	Orientation m_orientation;
+	
 };
 
 

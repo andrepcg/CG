@@ -1,7 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "GameManager.h"
-
+#include "Model.h"
+#include "Mesh.h"
 
 GameManager::GameManager(Rect gameBounds, Player *p){
 	bounds = gameBounds;
@@ -17,7 +18,10 @@ GameManager::GameManager(Rect gameBounds, Player *p){
 	collisionGrid->setCell(20, 20, BLOCKED);
 
 	mesh = new Mesh();
+
 	mesh->LoadMesh("./Content/models/puddi.obj");
+
+	
 
 	for (int i = 0; i < 200; i++){
 		entities.push_back(new Enemy(rand() % quad->BoundingBox.w, 0, rand() % quad->BoundingBox.h, quad, collisionGrid));

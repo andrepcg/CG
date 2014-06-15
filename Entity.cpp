@@ -4,6 +4,7 @@
 
 class Enemy;
 #include "Enemy.h"
+#include "Mesh.h"
 
 void Entity::setMesh(Mesh *m){
 	mesh = m;

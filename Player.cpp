@@ -79,23 +79,32 @@ void Player::move(bool *keys, float deltaTime){
 		//XRotationRadius = (Xrotation / 180 * Pi);
 		v.x += float(sin(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
 		v.y -= float(cos(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
+		headbob(deltaTime);
 	}
 
 	if (keys['S']){
 		//XRotationRadius = (Xrotation / 180 * Pi);
 		v.x -= float(sin(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
 		v.y += float(cos(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
+		headbob(deltaTime);
 	}
 
 	if (keys['A']){
 		v.x -= float(cos(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
 		v.y -= float(sin(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
+		headbob(deltaTime);
 	}
 
 	if (keys['D']){
 		v.x += float(cos(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
 		v.y += float(sin(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
+		headbob(deltaTime);
 	}
+
+	
+
+	if (r == 32768)
+		r = 0;
 
 	if (keys['E'])
 		pos.y += BASE_MOVE_SPEED * deltaTime;
@@ -127,6 +136,11 @@ void Player::move(bool *keys, float deltaTime){
 	}
 
 	v.x = v.y = 0;
+}
+
+void Player::headbob(float d){
+	pos.y += 0.1 * sin(r * d * ((BASE_MOVE_SPEED + speed_bonus) / 20.0f));
+	r++;
 }
 
 void Player::attack(Entity *e, float dmg){

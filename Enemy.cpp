@@ -115,8 +115,9 @@ void Enemy::renderMesh(){
 	glPushMatrix();
 	glTranslated(pos.x, -15, pos.z);
 	mesh->Render();
-	glPopMatrix();
 
+	glPopMatrix();
+	
 }
 
 void Enemy::renderCube(){

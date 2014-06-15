@@ -49,6 +49,7 @@ public:
 private:
 	void updateBoxes();
 	void move(bool *keys, float deltaTime);
+	void headbob(float d);
 	float jumpVel;
 	float gravity = -1100;
 	bool jumped;
@@ -61,6 +62,7 @@ private:
 	float ORIGINAL_ATTACK_RADIUS;
 	float ORIGINAL_REPEL_FORCE;
 
+	int r;
 	
 };
 

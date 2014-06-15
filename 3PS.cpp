@@ -29,6 +29,7 @@
 #include "stb_image.h"
 #include "camera.h"
 #include "GameManager.h"
+#include "Model.h"
 
 using namespace std;
 
@@ -80,6 +81,8 @@ bool performance = true;
 bool debugKeys[256];
 
 
+mar::Model *treeModel;
+
 void setOrthographicProjection() {
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -114,11 +117,12 @@ void Enables(void){
 // 	glFrontFace(GL_CW);
 // 	glCullFace(GL_BACK);
 // 	glEnable(GL_CULL_FACE);
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
-	/*
+
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+	
+	/*
+
 	glEnable(GL_LIGHT1);
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light1_ambient);
@@ -198,19 +202,22 @@ void DrawCube(float x, float y, float z){
 	glPopMatrix();
 }
 
-void DrawTree(QuadTree* tree)
+void DrawQuadTree(QuadTree* tree)
 {
 	if (tree == NULL)
 		return;
 
 	drawRectFloor(tree->BoundingBox.x, tree->BoundingBox.y, tree->BoundingBox.w, tree->BoundingBox.h, RGBf(0.0, 1.0, 0.0));
 
-	DrawTree(tree->northWest);
-	DrawTree(tree->northEast);
-	DrawTree(tree->southWest);
-	DrawTree(tree->southEast);
+	DrawQuadTree(tree->northWest);
+	DrawQuadTree(tree->northEast);
+	DrawQuadTree(tree->southWest);
+	DrawQuadTree(tree->southEast);
 
 }
+
+vector<Tree> trees;
+Mesh *arvore;
 
 void initGame(void){
 
@@ -233,7 +240,30 @@ void initGame(void){
 	
 	for (int i = 0; i < 6; i++)
 		loadTexture(texturas[i], 0, SkyboxTexture, i);
-	
+
+	treeModel = new mar::Model();
+	treeModel->load("Content/models/", "arvore.obj", "arvore.mtl");
+
+	arvore = new Mesh();
+	arvore->LoadMesh("Content/models/arvore.obj");
+
+
+
+	for (int i = 0; i < 100; i++){
+		int x = randInt(0, gameManager->collisionGrid->gridCols);
+		int z = randInt(0, gameManager->collisionGrid->gridRows);
+		int ang = randInt(0, 180);
+		trees.push_back(Tree(x * gameManager->collisionGrid->cellSize + gameManager->collisionGrid->cellSize / 2.0, z * gameManager->collisionGrid->cellSize + gameManager->collisionGrid->cellSize / 2.0, ang));
+		gameManager->collisionGrid->setCell(x, z, BLOCKED);
+	}
+
+// 	for (int z = 0; z < bounds.h; z++){
+// 		for (int x = 0; x < bounds.w; x++){
+// 			float r = randInt(0, )
+// 			if (r < 0.05)
+// 				trees.push_back(Tree(x, z, randInt());
+// 		}
+// 	}
 }
 
 void DrawPlayer(){
@@ -313,6 +343,8 @@ void DrawHUD(){
 	
 	glPopMatrix();
 	resetPerspectiveProjection();
+
+	
 }
 
 
@@ -361,31 +393,30 @@ void update(){
 	
 }
 
+void drawTree(Tree t){
+	glPushMatrix();
+	glTranslatef(t.x, -10, t.z);
+	glScalef(3.0, 3.0, 3.0);
+	glRotatef(t.ang, 0.0, 1.0, 0.0);
+	//treeModel->render(false);
+	arvore->Render();
+	glPopMatrix();
+}
 
-void drawCollisionGrid()
-{
-	GLfloat extent = gameManager->collisionGrid->boundingBox.w; // How far on the Z-Axis and X-Axis the ground extends
-	GLfloat stepSize = gameManager->collisionGrid->cellSize;  // The size of the separation between points
+
+void drawCollisionGrid(){
+
 	GLfloat groundLevel = -10.0f;
 	
 	glColor4f(1, 0, 0, 0.4);
 	
-// 	glBegin(GL_LINES);
-// 	for (int i = 0; i < collisionGrid->gridCols; i++)
-// 	{
-// 		glVertex3f(i * stepSize, groundLevel, 0);
-// 		glVertex3f(i * stepSize, groundLevel, extent);
-// 
-// 		glVertex3f(0, groundLevel, i * stepSize);
-// 		glVertex3f(extent, groundLevel, i * stepSize);
-// 
-// 	}
-// 	glEnd();
 	
 	for (int z = 0; z < gameManager->collisionGrid->gridRows; z++){
 		for (int x = 0; x < gameManager->collisionGrid->gridCols; x++){
-			if (gameManager->collisionGrid->getCell(x, z) == BLOCKED)
+			if (gameManager->collisionGrid->getCell(x, z) == BLOCKED){
 				drawFilledRect(x * gameManager->collisionGrid->cellSize, -10, z * gameManager->collisionGrid->cellSize, gameManager->collisionGrid->cellSize, gameManager->collisionGrid->cellSize, RGBf(1.0, 0.0, 0.0));
+				//renderTree(x * gameManager->collisionGrid->cellSize + gameManager->collisionGrid->cellSize / 2.0, -10, z * gameManager->collisionGrid->cellSize + gameManager->collisionGrid->cellSize / 2.0, randInt(0, 180));
+			}
 		}
 	}
 
@@ -394,7 +425,7 @@ void drawCollisionGrid()
 
 void drawSkybox(float x, float y, float z, float width, float height, float length)
 {
-
+	glDisable(GL_LIGHTING);
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glColor3f(1.0, 1.0, 1.0);
 	// Center the Skybox around the given x,y,z position
@@ -458,18 +489,21 @@ void drawSkybox(float x, float y, float z, float width, float height, float leng
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glEnable(GL_LIGHTING);
 
 }
 
 void debugRender(){
 	if (debugKeys[GLFW_KEY_B]){
-		DrawTree(gameManager->quad);
+		DrawQuadTree(gameManager->quad);
 	}
 
 	if (debugKeys[GLFW_KEY_N]){
 		
 	}
 }
+
+
 
 void render(){
 
@@ -483,17 +517,23 @@ void render(){
 
 	
 	gameManager->DrawEntities();
- 	drawFilledRect(0, -11, 0, 8192, 8192, RGBf(0.5, 0.5, 0.5));
- 	drawCollisionGrid();
 
+	glDisable(GL_LIGHTING);
+ 	drawFilledRect(0, -10, 0, 8192, 8192, RGBf(0.5, 0.5, 0.5));
+	glEnable(GL_LIGHTING);
+
+ 	drawCollisionGrid();
 
 	gameManager->drawMission();
 
-	debugRender();
+
+	for (int i = 0; i < trees.size(); i++)
+		drawTree(trees[i]);
 	
 
+	debugRender();
+	
 	drawSkybox(0, 0, 0, 20000, 20000, 20000);
-
 
 	// TODO desenhar palavras tem problemas de performance
 	DrawHUD();
@@ -600,7 +640,6 @@ void initGL(){
 
 	// TODO desactivado porque escurece o ecra
 	glEnable(GL_TEXTURE_2D);
-
 
 }
 

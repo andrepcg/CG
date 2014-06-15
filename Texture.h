@@ -32,11 +32,11 @@ public:
 	bool Load();
 
 	void Bind(GLenum TextureUnit, Shader *shader);
-
+	GLuint m_textureObj;
 private:
 	std::string m_fileName;
 	GLenum m_textureTarget;
-	GLuint m_textureObj;
+	
 
 	unsigned char *image_data;
 	int image_width;
