@@ -14,6 +14,10 @@ XYZ Entity::getPos(){
 	return pos;
 }
 
+void Entity::setPos(XYZ p){
+	pos = p;
+}
+
 bool Entity::isPlayer(){
 	return isP;
 }
@@ -63,7 +67,7 @@ void Entity::repelEntities(){
 
 	std::vector<Entity*> closeBy = quad->queryRange(attackCircle);
 
-	for (int i = 0; i < closeBy.size(); i++){
+	for (unsigned int i = 0; i < closeBy.size(); i++){
 
 		if (!this->isPlayer() && closeBy[i]->isPlayer()){
 
@@ -72,7 +76,7 @@ void Entity::repelEntities(){
 		}
 
 
-		if (repelCircle.radius == attackCircle.radius || repelCircle.Contains(closeBy[i]->pos.getXZ()))
+		if (repelCircle.radius == attackCircle.radius  || repelCircle.Contains(closeBy[i]->pos.getXZ()))
 			repel(closeBy[i]);
 
 
@@ -85,6 +89,9 @@ void Entity::repel(Entity *e){
 		return;
 
 	Enemy *ee = (Enemy*)e;
+
+ 	if (ee->isDead())
+ 		return;
 
 	float dx = pos.x - e->pos.x;
 	float dy = pos.z - e->pos.z;

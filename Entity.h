@@ -40,7 +40,7 @@ public:
 
 	void setYVel(float v);
 	void setAir(bool t);
-
+	void setPos(XYZ p);
 protected:
 	bool isP = false;
 	float health;

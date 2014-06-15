@@ -20,8 +20,8 @@ Player::Player(XYZ &p)
 
 	health = BASE_HEALTH;
 
-	itemInventory[FORCE_FIELD] = 2;
-	itemInventory[JUMP_DROP_EXPLOSION] = 10;
+	//itemInventory[FORCE_FIELD] = 2;
+	//itemInventory[JUMP_DROP_EXPLOSION] = 10;
 
 	boundingBox = Rect(p.x - BOUNDING_BOX_SIZE / 2.0f, p.z - BOUNDING_BOX_SIZE / 2.0f, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE);
 	repelCircle = Circle(pos.x, pos.z, REPEL_SIZE / 2);
@@ -56,7 +56,7 @@ void Player::processEventKeys(){
 		if (itemInventory[FORCE_FIELD] > 0){
 			forceFieldStartTime = currentTimeMillis();
 			currentlyUsing = FORCE_FIELD;
-			REPEL_SIZE = ATTACK_RADIUS = 250;
+			REPEL_SIZE = ATTACK_RADIUS = 300;
 			REPEL_FORCE = 1000;
 			itemInventory[FORCE_FIELD]--;
 		}
@@ -96,32 +96,30 @@ void Player::move(bool *keys, float deltaTime){
 		//XRotationRadius = (Xrotation / 180 * Pi);
 		v.x += float(sin(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
 		v.y -= float(cos(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
-		headbob(deltaTime);
+
 	}
 
 	if (keys['S']){
 		//XRotationRadius = (Xrotation / 180 * Pi);
 		v.x -= float(sin(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
 		v.y += float(cos(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
-		headbob(deltaTime);
+
 	}
 
 	if (keys['A']){
 		v.x -= float(cos(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
 		v.y -= float(sin(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
-		headbob(deltaTime);
+
 	}
 
 	if (keys['D']){
 		v.x += float(cos(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
 		v.y += float(sin(YRotationRadius)) * (BASE_MOVE_SPEED + speed_bonus) * deltaTime;
-		headbob(deltaTime);
+		
 	}
+	if (keys['D'] || keys['A'] || keys['S'] || keys['W'])
+		headbob(deltaTime);
 
-	
-
-	if (r == INT_MAX - 1)
-		r = 0;
 
 	if (keys['E'])
 		pos.y += BASE_MOVE_SPEED * deltaTime;
@@ -165,8 +163,8 @@ void Player::move(bool *keys, float deltaTime){
 }
 
 void Player::headbob(float d){
-	pos.y += 0.1 * sin(r * d * ((BASE_MOVE_SPEED + speed_bonus) / 20.0f));
-	r++;
+	r += d;
+	pos.y += 60 * sin(r * ((BASE_MOVE_SPEED + speed_bonus) / 20.0f)) * d;
 }
 
 void Player::attack(Entity *e, float dmg){
@@ -195,7 +193,7 @@ void Player::jumpRepel(){
 	Circle c = Circle(pos.x, pos.z, attackCircle.radius * 4);
 	std::vector<Entity*> closeBy = quad->queryRange(c);
 
-	for (int i = 0; i < closeBy.size(); i++){
+	for (unsigned int i = 0; i < closeBy.size(); i++){
 
 		if (!closeBy[i]->isPlayer()){
 			this->attack(closeBy[i], 50);
@@ -222,6 +220,7 @@ void Player::repelF(Entity *e){
 
 	ee->externalForce.x -= x_speed;
 	ee->externalForce.y -= y_speed;
-	ee->setYVel(randInt(300, 500));
+	ee->setYVel(randInt(20, 40));
 	ee->setAir(true);
 }
+

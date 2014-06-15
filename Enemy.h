@@ -24,7 +24,9 @@ public:
 	void attack(Entity *e, float dmg);
 
 	float anguloDir;
-	
+	bool isDead();
+	void setDead(bool d);
+	void initialize(bool randPos);
 
 private:
 	Estado estado;
@@ -40,6 +42,8 @@ private:
 	int ATTACK_DELAY; // ms
 
 	void mediaVelocidade();
+	bool dead;
+
 	static const int AVG_SIZE = 20;
 	float velAvg[AVG_SIZE][2];
 	int curAvg = 0;

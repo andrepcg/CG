@@ -81,7 +81,7 @@ bool debugKeys[256];
 
 
 mar::Model *treeModel;
-
+std::vector<XY> crates;
 
 void setOrthographicProjection() {
 	glMatrixMode(GL_PROJECTION);
@@ -569,7 +569,8 @@ void render(){
 
 	player->render();
 
-	drawCrate(0, -10, 0, 64, 64, 64);
+	for (unsigned int i = 0; i < crates.size(); i++)
+		drawCrate(crates[i].x, -10, crates[i].y, 64, 64, 64);
 
 	gameManager->DrawEntities();
 
@@ -583,7 +584,7 @@ void render(){
 	gameManager->drawMission();
 
 
-	for (int i = 0; i < trees.size(); i++)
+	for (unsigned int i = 0; i < trees.size(); i++)
 		drawTree(trees[i]);
 	
 
@@ -597,6 +598,16 @@ void render(){
 	glfwSwapBuffers(window);
 }
 
+
+void putCrate(){
+
+	XY playerCell = XY((int)(player->getPos().x / gameManager->collisionGrid->cellSize), (int)(player->getPos().z / gameManager->collisionGrid->cellSize));
+
+	crates.push_back(playerCell * gameManager->collisionGrid->cellSize);
+
+	gameManager->collisionGrid->setCell(playerCell.x, playerCell.y, BLOCKED);
+
+}
 
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -640,6 +651,12 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			player->eventKeys[GLFW_KEY_Z] = true;
 		}
 
+		if (key == GLFW_KEY_C && action == GLFW_RELEASE){
+			if (player->itemInventory[BOX_CRATE] > 0){
+				putCrate();
+				player->itemInventory[BOX_CRATE]--;
+			}
+		}
 
 // 		if (key == GLFW_KEY_K && action == GLFW_RELEASE)
 // 			player->camera->firstPerson = !player->camera->firstPerson;
@@ -712,8 +729,6 @@ void mouseControl(GLFWwindow *win, double x, double y){
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
-
-	
 
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())

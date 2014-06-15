@@ -31,7 +31,7 @@ public:
 	void receiveDamage(float d);
 	void processEventKeys();
 
-	const float BASE_MOVE_SPEED = 1000.0f;
+	const float BASE_MOVE_SPEED = 1000.0f; // 200
 	const float BASE_HEALTH = 100.0f;
 	const float BASE_ATTACK_DAMAGE = 20.0f;
 	const float BASE_JUMP_V = 450.0f; // 500
@@ -62,10 +62,11 @@ private:
 	float ORIGINAL_ATTACK_RADIUS;
 	float ORIGINAL_REPEL_FORCE;
 
-	int r;
+	float r;
 	float extraGravity;
 	void jumpRepel();
 	void repelF(Entity *e);
+	void putCrate();
 };
 
 

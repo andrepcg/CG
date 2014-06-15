@@ -26,12 +26,28 @@ GameManager::GameManager(Rect gameBounds, Player *p){
 	tesouro->load("Content/models/", "treasure_chest.obj", "treasure_chest.mtl");
 
 	for (int i = 0; i < 200; i++){
-		entities.push_back(new Enemy(rand() % quad->BoundingBox.w, 0, rand() % quad->BoundingBox.h, quad, collisionGrid));
-		entities[i]->setMesh(mesh);
+		entities.push_back(createEntity());
 	}
 
-	for (int i = 0; i < entities.size(); i++)
+	for (unsigned int i = 0; i < entities.size(); i++)
 		quad->insert(entities[i]);
+}
+
+Enemy* GameManager::createEntity(){
+	Enemy *e = new Enemy(rand() % quad->BoundingBox.w, 0, rand() % quad->BoundingBox.h, quad, collisionGrid);
+	e->setMesh(mesh);
+	// TODO fazer spawn ao numero maximo de entidades mas algumas estao mortas
+	//e->setDead();
+	return e;
+}
+
+void GameManager::reviveEntity(){
+	for (unsigned int i = 0; i < entities.size(); i++){
+		Enemy *e = (Enemy*)entities[i];
+		if (e->isDead() == true){
+			e->initialize(true);
+		}
+	}
 }
 
 void GameManager::update(float deltaTime){
@@ -40,10 +56,10 @@ void GameManager::update(float deltaTime){
 
 	quad->insert(player);
 
-	for (int i = 0; i < entities.size(); i++)
+	for (unsigned int i = 0; i < entities.size(); i++)
 		quad->insert(entities[i]);
 
-	for (int i = 0; i < entities.size(); i++)
+	for (unsigned int i = 0; i < entities.size(); i++)
 		entities[i]->update(player, deltaTime);
 
 
@@ -89,7 +105,7 @@ void GameManager::update(float deltaTime){
 }
 
 void GameManager::applyBonusPlayer(){
-	for (int i = 0; i < bonus.size(); i++){
+	for (unsigned int i = 0; i < bonus.size(); i++){
 
 		std::cout << "Bonus: " << bonus[i].b << std::endl;
 
@@ -133,7 +149,7 @@ void GameManager::newRandomMission(){
 	int numBonus = randInt(1, 2);
 	for (int i = 0; i < numBonus; i++){
 		Bonus b;
-		b.b = (MissionBonus)randInt(1, sizeof(MissionBonus));
+		b.b = (MissionBonus) randInt(1, 8);
 		b.amount = randInt(1, 15)/100.0f;
 		bonus.push_back(b);
 	}
@@ -163,19 +179,21 @@ void GameManager::DrawEntities() {
 
 
 	if (performance)
-		for (int i = 0; i < entities.size(); i++)
-			entities[i]->renderCube();
+		for (unsigned int i = 0; i < entities.size(); i++)
+			if (entities[i]->isDead() == false)
+				entities[i]->renderCube();
 	else
-		for (int i = 0; i < entities.size(); i++)
-			entities[i]->renderMesh();
+		for (unsigned int i = 0; i < entities.size(); i++)
+			if (entities[i]->isDead() == false)
+				entities[i]->renderMesh();
 
 
 	if (drawCollisionCircle)
-		for (int i = 0; i < entities.size(); i++)
+		for (unsigned int i = 0; i < entities.size(); i++)
 			DrawCircle(entities[i]->getRepelCircle().x, entities[i]->getRepelCircle().y, 0, entities[i]->getRepelCircle().radius, 10, RGBf(1.0, 0.0, 0.0));
 
 	if (drawLOS)
-		for (int i = 0; i < entities.size(); i++)
+		for (unsigned int i = 0; i < entities.size(); i++)
 			DrawCircle(entities[i]->playerLOS.x, entities[i]->playerLOS.y, 0, entities[i]->playerLOS.radius, 20, RGBf(1.0, 1.0, 0.0));
 
 

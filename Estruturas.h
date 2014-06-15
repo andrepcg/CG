@@ -46,6 +46,9 @@ struct XY
 	XY operator+(const XY& v2) const {
 		return(XY(x + v2.x, y + v2.y));
 	}
+	XY operator*(const float f) const {
+		return(XY(x * f, y * f));
+	}
 };
 
 struct XYZ

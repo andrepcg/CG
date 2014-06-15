@@ -278,7 +278,7 @@ namespace mar
 
 			OBJFace face;
 
-			for (int i = 1; i<tokens.size(); ++i) // Each item of the face
+			for (unsigned int i = 1; i<tokens.size(); ++i) // Each item of the face
 			{
 				OBJFaceItem item;
 
@@ -332,7 +332,7 @@ namespace mar
 			y /= length;
 			z /= length;
 
-			for (int i = 0; i<face.items.size(); ++i)
+			for (unsigned int i = 0; i<face.items.size(); ++i)
 			{
 				if (object_.computedNormals.at(face.items.at(i).vertexIndex).coords[0] == 0 &&
 					object_.computedNormals.at(face.items.at(i).vertexIndex).coords[1] == 0 &&
@@ -397,7 +397,7 @@ namespace mar
 		static float diffuse[4];
 		static float specular[4];
 
-		for (int i = 0; i<object_.faces.size(); ++i) // Each face
+		for (unsigned int i = 0; i<object_.faces.size(); ++i) // Each face
 		{
 			OBJFace& face = object_.faces.at(i);
 			OBJMaterial& material = object_.materials[face.material];
@@ -409,7 +409,7 @@ namespace mar
 			glBindTexture(GL_TEXTURE_2D, material.texture);
 
 			glBegin(GL_POLYGON);
-			for (int j = 0; j<object_.faces.at(i).items.size(); ++j) // Each vertex
+			for (unsigned int j = 0; j<object_.faces.at(i).items.size(); ++j) // Each vertex
 			{
 				OBJFaceItem& item = object_.faces.at(i).items.at(j);
 

@@ -27,14 +27,15 @@ public:
 	float getMissionCompletedTime();
 
 	int MISSION_DELAY = 5; // segundos
-	int MISSION_RADIUS_MIN = 400;
-	int MISSION_RADIUS_MAX = 1000;
+	int MISSION_RADIUS_MIN = 200;
+	int MISSION_RADIUS_MAX = 800;
 	
 	void DrawEntities();
 	std::vector<Enemy*> entities;
+	
 	QuadTree *quad;
 	CollisionGrid *collisionGrid;
-
+	void cleanDeadEntities();
 	Mesh *mesh;
 
 	bool performance = true;
@@ -54,7 +55,8 @@ private:
 	Player *player;
 	void newRandomMission();
 	void applyBonusPlayer();
-
+	Enemy* createEntity();
+	void reviveEntity();
 
 };
 

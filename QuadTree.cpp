@@ -52,16 +52,16 @@ void QuadTree::subdivide()
 	std::vector<Entity*> temp3 = queryRange(BBSW);
 	std::vector<Entity*> temp4 = queryRange(BBSE);
 
-	for (int i = 0; i < temp1.size(); i++)
+	for (unsigned int i = 0; i < temp1.size(); i++)
 		northWest->insert(temp1[i]);
 
-	for (int i = 0; i < temp2.size(); i++)
+	for (unsigned int i = 0; i < temp2.size(); i++)
 		northEast->insert(temp2[i]);
 
-	for (int i = 0; i < temp3.size(); i++)
+	for (unsigned int i = 0; i < temp3.size(); i++)
 		southWest->insert(temp3[i]);
 
-	for (int i = 0; i < temp4.size(); i++)
+	for (unsigned int i = 0; i < temp4.size(); i++)
 		southEast->insert(temp4[i]);
 
 
@@ -112,7 +112,7 @@ std::vector<Entity*> QuadTree::queryPoint(XY p){
 		return pointsInRange;
 
 	if (northWest == NULL){
-		for (int p = 0; p < points.size(); p++)
+		for (unsigned int p = 0; p < points.size(); p++)
 			pointsInRange.push_back(points[p]);
 		return pointsInRange;
 	}
@@ -136,7 +136,7 @@ std::vector<Entity*> QuadTree::queryRange(Rect& range)
 	if (!BoundingBox.Intersects(range))
 		return pointsInRange; // empty list
 
-	for (int p = 0; p < points.size(); p++){
+	for (unsigned int p = 0; p < points.size(); p++){
 		if (range.Contains(points[p]->getPos().getXZ()))
 			pointsInRange.push_back(points[p]);
 	}
@@ -164,7 +164,7 @@ std::vector<Entity*> QuadTree::queryRange(Circle& range)
 	if (!BoundingBox.Intersects(range))
 		return pointsInRange; // empty list
 
-	for (int p = 0; p < points.size(); p++){
+	for (unsigned int p = 0; p < points.size(); p++){
 		if (range.Contains(points[p]->getPos().getXZ()))
 			pointsInRange.push_back(points[p]);
 	}
