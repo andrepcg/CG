@@ -219,7 +219,7 @@ void initGame(void){
 
 	player->camera = camera;
 
-	char *nomesTex[] = { "Content/SunSetRight2048.png", "Content/SunSetLeft2048.png", "Content/SunSetUp2048.png", "Content/SunSetDown2048.png", "Content/SunSetFront2048.png", "Content/SunSetBack2048.png", "Content/crate.jpg", "Content/grass.jpg" };
+	char *nomesTex[] = { "Content/SunSetRight2048.png", "Content/SunSetLeft2048.png", "Content/SunSetUp2048.png", "Content/SunSetDown2048.png", "Content/SunSetFront2048.png", "Content/SunSetBack2048.png", "Content/crate.jpg", "Content/sand.jpg" };
 	
 	for (int i = 0; i < 8; i++)
 		loadTexture(nomesTex[i], 0, texturas, i);
@@ -371,7 +371,6 @@ void updateGame(){
 void update(){
 
 	UpdateFPS();
-
 
 	if (!paused)
 		updateGame();

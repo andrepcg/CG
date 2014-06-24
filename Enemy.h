@@ -49,5 +49,9 @@ private:
 	int curAvg = 0;
 
 	bool m_x, m_y;
+
+	Texture *tex;
+	
+		
 };
 #endif

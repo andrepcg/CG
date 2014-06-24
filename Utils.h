@@ -48,6 +48,6 @@ long currentTimeMillis();
 bool ReadFile(const char*, std::string&);
 void loadTexture(char *filename, int tipo, GLuint textureArray[], int index);
 void DrawCircle(float cx, float cy, float h, float r, int num_segments, RGBf rgb);
-
+void drawBox(GLfloat size, GLenum type);
 #endif
 

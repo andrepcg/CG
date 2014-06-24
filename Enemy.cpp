@@ -26,6 +26,8 @@ void Enemy::initialize(bool randPos){
 	dead = false;
 	color = RGBf(float(rand()) / RAND_MAX, float(rand()) / RAND_MAX, float(rand()) / RAND_MAX);
 	
+	tex = new Texture(GL_TEXTURE_2D, "./Content/homer.jpg");
+	tex->Load();
 
 	estado = WANDERING;
 	waitBeforeNewDestination = randInt(2, 6) * 1000; // milliseconds
@@ -89,7 +91,8 @@ void Enemy::update(Player *p, float deltaTime){
 
 		float d = deltaTime * 35.0f;
 		if (fabs(v.x) > d || fabs(v.y) > d)
-			anguloDir = -ToDegree(atan(v.y / v.x));
+			anguloDir = atan(v.y / v.x) *180/PI;
+
 
 		moveBy(clamp(v.x, -MAX_SPEED, MAX_SPEED), clamp(v.y, -MAX_SPEED, MAX_SPEED));
 
@@ -175,25 +178,130 @@ void Enemy::newRandomWalkToPos(){
 	walkToPos = Rect(randInt(0, 8192) - 25, randInt(0, 8192) - 25, 50, 50);
 }
 
+float cubeSize = 20;
+
 void Enemy::renderMesh(){
+	/*
 	glPushMatrix();
 	glTranslated(pos.x, -15, pos.z);
 	glRotatef( (anguloDir + 20 ), 0.0, 1.0, 0.0);
 	mesh->Render();
 
 	glPopMatrix();
+
+	*/
+
+
+	glEnable(GL_TEXTURE_2D);
+	tex->Bind(GL_TEXTURE_2D, NULL);
+	glPushMatrix();
+
+	glTranslatef(pos.x, pos.y, pos.z);
+
+	glRotatef((v.x >= 0) ? -anguloDir + 180 : -anguloDir, 0.0, 1.0, 0.0);
+
+	glTranslatef(-cubeSize / 2, 0, -cubeSize / 2);
+
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0, 0, cubeSize);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0, cubeSize, cubeSize);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, cubeSize, 0);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.1f); glVertex3f(0, 0, cubeSize);
+	glTexCoord2f(0.1f, 0.1f); glVertex3f(cubeSize, 0, cubeSize);
+	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, cubeSize, cubeSize);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, cubeSize, cubeSize);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.1f); glVertex3f(cubeSize, 0, cubeSize);
+	glTexCoord2f(0.1f, 0.1f); glVertex3f(cubeSize, 0, 0);
+	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, cubeSize, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(cubeSize, cubeSize, cubeSize);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.1f); glVertex3f(0, cubeSize, 0);
+	glTexCoord2f(0.1f, 0.1f); glVertex3f(cubeSize, cubeSize, 0);
+	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, 0, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, 0, 0);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.1f); glVertex3f(0, cubeSize, 0);
+	glTexCoord2f(0.1f, 0.1f); glVertex3f(0, cubeSize, cubeSize);
+	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, cubeSize, cubeSize);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(cubeSize, cubeSize, 0);
+	glEnd();
+
+	glPopMatrix();
+
+
+	glDisable(GL_TEXTURE_2D);
 	
 }
 
+
+
 void Enemy::renderCube(){
+	glEnable(GL_TEXTURE_2D);
+	tex->Bind(GL_TEXTURE_2D, NULL);
 	glPushMatrix();
-	glColor3f(color.r, color.g, color.b);
+	//glColor3f(color.r, color.g, color.b);
 	glTranslated(pos.x, pos.y, pos.z);
-	glRotatef(anguloDir, 0.0, 1.0, 0.0);
-	glutSolidCube(20);
+	
+	glRotatef((v.x >= 0) ? -anguloDir + 180 : -anguloDir, 0.0, 1.0, 0.0);
+
+	glTranslated(-cubeSize / 2, 0, -cubeSize / 2);
+
+
+	//glutSolidCube(20);
+	//drawBox(20, GL_QUADS);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0, 0, cubeSize);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0, cubeSize, cubeSize);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, cubeSize, 0);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.1f); glVertex3f(0, 0, cubeSize);
+	glTexCoord2f(0.1f, 0.1f); glVertex3f(cubeSize, 0, cubeSize);
+	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, cubeSize, cubeSize);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, cubeSize, cubeSize);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.1f); glVertex3f(cubeSize, 0, cubeSize);
+	glTexCoord2f(0.1f, 0.1f); glVertex3f(cubeSize, 0, 0);
+	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, cubeSize, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(cubeSize, cubeSize, cubeSize);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.1f); glVertex3f(0, cubeSize, 0);
+	glTexCoord2f(0.1f, 0.1f); glVertex3f(cubeSize, cubeSize, 0);
+	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, 0, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, 0, 0);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.1f); glVertex3f(0, cubeSize, 0);
+	glTexCoord2f(0.1f, 0.1f); glVertex3f(0, cubeSize, cubeSize);
+	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, cubeSize, cubeSize);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(cubeSize, cubeSize, 0);
+	glEnd();
+
 	glPopMatrix();
 
-	
+
+	glDisable(GL_TEXTURE_2D);
+
 }
 
 void Enemy::attack(Entity *e, float dmg){

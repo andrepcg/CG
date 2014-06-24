@@ -25,7 +25,7 @@ GameManager::GameManager(Rect gameBounds, Player *p){
 	tesouro = new mar::Model();
 	tesouro->load("Content/models/", "treasure_chest.obj", "treasure_chest.mtl");
 
-	for (int i = 0; i < 200; i++){
+	for (int i = 0; i < 1; i++){
 		entities.push_back(createEntity());
 	}
 
@@ -164,13 +164,13 @@ void GameManager::drawMission(){
 	if (estado == WAITING_FOR_MISSION_COMPLETE){
 		DrawCircle(missionObjective.x, missionObjective.y, 1, missionObjective.radius, 32, RGBf(1, 0, 0));
 		glPushMatrix();
-		glColor3f(1.0,0.0,0.0);
+
 		glTranslatef(missionObjective.x, -10, missionObjective.y);
-		//glutSolidCube(40);
+
 		glScalef(3.0, 3.0, 3.0);
 		tesouro->render(false);
 		glPopMatrix();
-		glDisable(GL_TEXTURE_2D);
+
 	}
 }
 
@@ -200,4 +200,8 @@ void GameManager::DrawEntities() {
 			DrawCircle(entities[i]->playerLOS.x, entities[i]->playerLOS.y, 0, entities[i]->playerLOS.radius, 20, RGBf(1.0, 1.0, 0.0));
 
 	player->drawBullets();
+
+	if (player->currentlyUsing == FORCE_FIELD){
+		player->renderForceField();
+	}
 }

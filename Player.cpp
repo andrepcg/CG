@@ -22,8 +22,8 @@ Player::Player(XYZ &p)
 
 	health = BASE_HEALTH;
 
-	//itemInventory[FORCE_FIELD] = 2;
-	//itemInventory[JUMP_DROP_EXPLOSION] = 10;
+	itemInventory[FORCE_FIELD] = 10;
+	itemInventory[JUMP_DROP_EXPLOSION] = 10;
 
 	boundingBox = Rect(p.x - BOUNDING_BOX_SIZE / 2.0f, p.z - BOUNDING_BOX_SIZE / 2.0f, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE);
 	repelCircle = Circle(pos.x, pos.z, REPEL_SIZE / 2);
@@ -187,8 +187,9 @@ void Player::attack(Entity *e, float dmg){
 void Player::render(){
 	//camera->render();
 
-	if (currentlyUsing == FORCE_FIELD)
-		DrawCircle(pos.x, pos.z, 2, REPEL_SIZE / 2.0, 20, RGBf(0, 0, 1));
+	if (currentlyUsing == FORCE_FIELD){
+
+	}
 
 	// TODO player model
 	if (!camera->firstPerson){
@@ -199,8 +200,16 @@ void Player::render(){
 		glPopMatrix();
 	}
 
-	
-	
+}
+
+void Player::renderForceField(){
+	DrawCircle(pos.x, pos.z, 2, REPEL_SIZE / 2.0, 20, RGBf(0, 0, 1));
+
+	glPushMatrix();
+	glColor4f(1, 0, 1, 0.5);
+	glTranslatef(pos.x, -10, pos.z);
+	glutSolidSphere(REPEL_SIZE, 50, 50);
+	glPopMatrix();
 }
 
 Player::~Player()

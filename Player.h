@@ -56,6 +56,7 @@ public:
 	bool eventKeys[256];
 	void shoot();
 	void drawBullets();
+	void renderForceField();
 
 private:
 	void updateBoxes();
@@ -80,6 +81,7 @@ private:
 	void putCrate();
 	void updateBullets(float deltaTime);
 	
+
 	long lastShootTime;
 
 	const int SHOOT_DELAY = 500; //ms
