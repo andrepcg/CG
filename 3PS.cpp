@@ -65,7 +65,7 @@ bool paused = true;
 
 GLFWwindow* window;
 
-GLuint SkyboxTexture[6];
+GLuint texturas[6];
 
 Camera* m_pGameCamera;
 PersProjInfo projeccao;
@@ -104,8 +104,14 @@ void resetPerspectiveProjection() {
 GLfloat dark[4] = { 0.0, 0.0, 0.0, 1.0 };
 GLfloat normal[4] = { 0.5, 0.5, 0.5, 1.0 };
 GLfloat bright[4] = { 1.0, 1.0, 1.0, 1.0 };
-GLfloat pos2[4] = { 8192, 100.0, 8192, 1.0 };
+GLfloat sunPos[4] = { -1000, 500.0, -100, 1.0 };
 GLfloat light1_ambient[] = { 0.8, 0.8, 0.8, 1.0 };
+GLfloat lampPos[] = { 100, 100, 100, 1 };
+GLfloat lampCorAmb[] = { 0.1, 0.1, 0.1, 1.0 };
+GLfloat lampCorEsp[] = { 1.0, 1.0, 1.0, 1.0 };
+GLfloat lampCorDif[] = { 1.0, 1.0, 1.0, 1.0 };
+
+GLfloat sunsetColor[4] = { 0.98, 0.834, 0.647, 1.0 };
 
 void Enables(void){
 
@@ -114,49 +120,26 @@ void Enables(void){
 	glShadeModel(GL_SMOOTH);
 
 	glEnable(GL_TEXTURE_2D);
-// 	glFrontFace(GL_CW);
-// 	glCullFace(GL_BACK);
-// 	glEnable(GL_CULL_FACE);
 
-	glEnable(GL_LIGHTING);
+ 	glEnable(GL_CULL_FACE);
+
+ 	glEnable(GL_LIGHTING);
+
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, sunsetColor);
+	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+
 	glEnable(GL_LIGHT0);
-	
-	/*
-
-	glEnable(GL_LIGHT1);
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light1_ambient);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, normal);
-	glLightfv(GL_LIGHT1, GL_SPECULAR, normal);
-
-	GLfloat mat_shininess = 5.0;
-	glMaterialfv(GL_FRONT, GL_SPECULAR, normal);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, normal);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, normal);
-	glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
-	*/
-
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient[0]);
-	//glLightfv(GL_LIGHT0, GL_SPECULAR, LightAmbient[0]);
+	glLightfv(GL_LIGHT0, GL_POSITION, sunPos);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lampCorAmb);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lampCorDif);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lampCorEsp);
+// 	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0);
+// 	glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.05f);
+// 	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.0f);
 
 
-	//glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 10);
-	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, LightAmbient[0]);
-	//glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, LightAmbient[0]);
-	//glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, LightAmbient[0]);
-	//glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
 
 
-// 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, bright);
-// 
-// 	glLightfv(GL_LIGHT0, GL_DIFFUSE, bright);
-// 	glLightfv(GL_LIGHT0, GL_SPECULAR, bright);
- 	//glLightfv(GL_LIGHT0, GL_POSITION, pos2);
-// 
-// 	glMaterialfv(GL_FRONT, GL_AMBIENT, bright);
-// 	glMaterialfv(GL_FRONT, GL_DIFFUSE, dark);
-// 	glMaterialfv(GL_FRONT, GL_SPECULAR, bright);
-// 	glMateriali(GL_FRONT, GL_SHININESS, 128);
 
 }
 
@@ -236,10 +219,10 @@ void initGame(void){
 
 	player->camera = camera;
 
-	char *texturas[7] = { "Content/SunSetRight2048.png", "Content/SunSetLeft2048.png", "Content/SunSetUp2048.png", "Content/SunSetDown2048.png", "Content/SunSetFront2048.png", "Content/SunSetBack2048.png" ,"Content/crate.jpg"};
+	char *nomesTex[] = { "Content/SunSetRight2048.png", "Content/SunSetLeft2048.png", "Content/SunSetUp2048.png", "Content/SunSetDown2048.png", "Content/SunSetFront2048.png", "Content/SunSetBack2048.png", "Content/crate.jpg", "Content/grass.jpg" };
 	
-	for (int i = 0; i < 7; i++)
-		loadTexture(texturas[i], 0, SkyboxTexture, i);
+	for (int i = 0; i < 8; i++)
+		loadTexture(nomesTex[i], 0, texturas, i);
 
 	treeModel = new mar::Model();
 	treeModel->load("Content/models/", "arvore.obj", "arvore.mtl");
@@ -403,11 +386,11 @@ void drawTree(Tree t){
 	glPushMatrix();
 	
 	if (!performance){
-		glTranslatef(t.x, -10, t.z);
+		glTranslatef(t.x, -15, t.z);
 		glScalef(3.0, 3.0, 3.0);
 		glRotatef(t.ang, 0.0, 1.0, 0.0);
-		//treeModel->render(false);
-		arvore->Render();
+		treeModel->render(false);
+		//arvore->Render();
 	}
 	else{
 		glTranslatef(t.x, 70, t.z);
@@ -438,7 +421,7 @@ void drawCollisionGrid(){
 void drawCrate(float x, float y, float z, float width, float height, float length){
 	glEnable(GL_TEXTURE_2D);
 
-	glBindTexture(GL_TEXTURE_2D, SkyboxTexture[CRATE]);
+	glBindTexture(GL_TEXTURE_2D, texturas[CRATE]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, z);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y, z + length);
@@ -476,6 +459,56 @@ void drawCrate(float x, float y, float z, float width, float height, float lengt
 	glDisable(GL_TEXTURE_2D);
 }
 
+void meshFace(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat altura, GLfloat largura, int numDiv, GLfloat normalX, GLfloat normalY, GLfloat normalZ){
+	int i, j;
+
+	GLfloat meshLargura = (GLfloat)abs(largura) / numDiv;
+	GLfloat meshAltura = (GLfloat)abs(altura) / numDiv;
+
+	GLfloat textureLargura = (GLfloat)(20.0f / numDiv);
+	GLfloat textureAltura = (GLfloat)(20.0f / numDiv);
+
+	for (i = 0; i < numDiv; i++){
+		for (j = 0; j < numDiv; j++){
+
+			glNormal3f(normalX, normalY, normalZ);
+
+			glBegin(GL_POLYGON);
+			glTexCoord2f(0.0f + textureLargura*i, 0.0f + textureAltura*j);
+			glVertex3f(posX + meshLargura*i, posY, posZ + meshAltura*j);
+
+			glTexCoord2f(0.0f + textureLargura*(i), 0.0f + textureAltura*(j + 1));
+			glVertex3f(posX + meshLargura*(i), posY, posZ + meshAltura*(j + 1));
+
+			glTexCoord2f(0.0f + textureLargura*(i + 1), 0.0f + textureAltura*(j + 1));
+			glVertex3f(posX + meshLargura*(i + 1), posY, posZ + meshAltura*(j + 1));
+
+			glTexCoord2f(0.0f + textureLargura*(i + 1), 0.0f + textureAltura*j);
+			glVertex3f(posX + meshLargura*(i + 1), posY, posZ + meshAltura*j);
+			glEnd();
+
+		}
+	}
+}
+
+void drawGroundMesh(float x, float y, float z, float width, float length, int tesselation){
+
+	float xSize = width / tesselation;
+	float zSize = length / tesselation;
+
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glColor3f(1.0, 1.0, 1.0);
+
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, texturas[RELVA]);
+
+	meshFace(0, -10, 0, 8192, 8192, 32, 0, 1, 0);
+
+
+}
+
+
 
 void drawSkybox(float x, float y, float z, float width, float height, float length)
 {
@@ -490,7 +523,7 @@ void drawSkybox(float x, float y, float z, float width, float height, float leng
 
 
 	// Draw Front side
-	glBindTexture(GL_TEXTURE_2D, SkyboxTexture[SKYFRONT]);
+	glBindTexture(GL_TEXTURE_2D, texturas[SKYFRONT]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y, z + length);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y + height, z + length);
@@ -499,7 +532,7 @@ void drawSkybox(float x, float y, float z, float width, float height, float leng
 	glEnd();
 
 	// Draw Back side
-	glBindTexture(GL_TEXTURE_2D, SkyboxTexture[SKYBACK]);
+	glBindTexture(GL_TEXTURE_2D, texturas[SKYBACK]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(x + width, y, z);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(x + width, y + height, z);
@@ -508,7 +541,7 @@ void drawSkybox(float x, float y, float z, float width, float height, float leng
 	glEnd();
 
 	// Draw Left side
-	glBindTexture(GL_TEXTURE_2D, SkyboxTexture[SKYLEFT]);
+	glBindTexture(GL_TEXTURE_2D, texturas[SKYLEFT]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y + height, z);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + height, z + length);
@@ -517,7 +550,7 @@ void drawSkybox(float x, float y, float z, float width, float height, float leng
 	glEnd();
 
 	// Draw Right side
-	glBindTexture(GL_TEXTURE_2D, SkyboxTexture[SKYRIGHT]);
+	glBindTexture(GL_TEXTURE_2D, texturas[SKYRIGHT]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y, z);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(x + width, y, z + length);
@@ -526,7 +559,7 @@ void drawSkybox(float x, float y, float z, float width, float height, float leng
 	glEnd();
 
 	// Draw Up side
-	glBindTexture(GL_TEXTURE_2D, SkyboxTexture[SKYUP]);
+	glBindTexture(GL_TEXTURE_2D, texturas[SKYUP]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y + height, z);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(x + width, y + height, z + length);
@@ -535,7 +568,7 @@ void drawSkybox(float x, float y, float z, float width, float height, float leng
 	glEnd();
 
 	// Draw Down side
-	glBindTexture(GL_TEXTURE_2D, SkyboxTexture[SKYDOWN]);
+	glBindTexture(GL_TEXTURE_2D, texturas[SKYDOWN]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, z);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y, z + length);
@@ -567,7 +600,8 @@ void render(){
 	Enables();
 
 
-	player->render();
+	camera->render();
+	//player->render();
 
 	for (unsigned int i = 0; i < crates.size(); i++)
 		drawCrate(crates[i].x, -10, crates[i].y, 64, 64, 64);
@@ -576,17 +610,17 @@ void render(){
 
 	// ground
 	glDisable(GL_LIGHTING);
- 	drawFilledRect(0, -10, 0, 8192, 8192, RGBf(0.5, 0.5, 0.5));
+ 	//drawFilledRect(0, -10, 0, 8192, 8192, RGBf(0.5, 0.5, 0.5));
+	drawGroundMesh(0, -10 , 0, 8192, 8192, 64);
 	glEnable(GL_LIGHTING);
 
  	//drawCollisionGrid();
-
-	gameManager->drawMission();
 
 
 	for (unsigned int i = 0; i < trees.size(); i++)
 		drawTree(trees[i]);
 	
+	gameManager->drawMission();
 
 	debugRender();
 	
@@ -626,6 +660,9 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 		if (key == GLFW_KEY_P && action == GLFW_RELEASE)
 			paused = !paused;
+
+		if (key == GLFW_KEY_K && action == GLFW_RELEASE)
+			camera->firstPerson = !camera->firstPerson;
 
 		if (key == GLFW_KEY_1 && action == GLFW_RELEASE){	
 			performance = !performance;
@@ -705,8 +742,6 @@ void initGL(){
 
 	
 
-	
-
 	//glfwSwapInterval(1); //vsync
 
 	glEnable(GL_DEPTH_TEST); 
@@ -716,7 +751,6 @@ void initGL(){
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glEnable(GL_CULL_FACE);
 
-	// TODO desactivado porque escurece o ecra
 	glEnable(GL_TEXTURE_2D);
 
 }
@@ -724,6 +758,13 @@ void initGL(){
 void mouseControl(GLFWwindow *win, double x, double y){
 	camera->mouseControl(win, x, y);
 
+}
+
+void mouseButton(GLFWwindow *win, int button, int action, int mods){
+	if (action == GLFW_PRESS){
+		if (button == GLFW_MOUSE_BUTTON_LEFT)
+			player->shoot();
+	}
 }
 
 int main(int argc, char **argv)
@@ -757,6 +798,7 @@ int main(int argc, char **argv)
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, mouseControl);
+	glfwSetMouseButtonCallback(window, mouseButton);
 	
 
 	while (!glfwWindowShouldClose(window)){

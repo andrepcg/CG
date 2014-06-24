@@ -9,6 +9,13 @@ class Camera;
 
 #include "Entity.h"
 
+#include "Model.h"
+
+struct Bullet 
+{
+	XYZ pos;
+	float xRot, yRot, zRot;
+};
 
 
 class Player : public Entity
@@ -31,7 +38,7 @@ public:
 	void receiveDamage(float d);
 	void processEventKeys();
 
-	const float BASE_MOVE_SPEED = 1000.0f; // 200
+	const float BASE_MOVE_SPEED = 200.0f; // 200
 	const float BASE_HEALTH = 100.0f;
 	const float BASE_ATTACK_DAMAGE = 20.0f;
 	const float BASE_JUMP_V = 450.0f; // 500
@@ -44,7 +51,11 @@ public:
 	int FORCE_FIELD_DURATION = 10; // s
 	long forceFieldStartTime;
 
+	mar::Model *mesh;
+
 	bool eventKeys[256];
+	void shoot();
+	void drawBullets();
 
 private:
 	void updateBoxes();
@@ -67,6 +78,15 @@ private:
 	void jumpRepel();
 	void repelF(Entity *e);
 	void putCrate();
+	void updateBullets(float deltaTime);
+	
+	long lastShootTime;
+
+	const int SHOOT_DELAY = 500; //ms
+	const float BULLET_SPEED = 1000;
+
+	std::vector<Bullet> bullets;
+	
 };
 
 

@@ -12,7 +12,7 @@
 // Comment this line to use OBJ-exported normals
 // Default behavior is to compute & average normals manually, discarding the exported ones,
 // since most of the time they are no more than garbage.
-#define USE_COMPUTED_NORMALS 1
+#define USE_COMPUTED_NORMALS 0
 
 namespace
 {
@@ -402,9 +402,9 @@ namespace mar
 			OBJFace& face = object_.faces.at(i);
 			OBJMaterial& material = object_.materials[face.material];
 
-			//glMaterialfv( GL_FRONT, GL_AMBIENT,  material.Ka );
-			//glMaterialfv( GL_FRONT, GL_DIFFUSE,  material.Kd );
-			//glMaterialfv( GL_FRONT, GL_SPECULAR, material.Ks );
+			glMaterialfv( GL_FRONT, GL_AMBIENT,  material.Ka );
+			glMaterialfv( GL_FRONT, GL_DIFFUSE,  material.Kd );
+			glMaterialfv( GL_FRONT, GL_SPECULAR, material.Ks );
 
 			glBindTexture(GL_TEXTURE_2D, material.texture);
 
@@ -469,6 +469,7 @@ namespace mar
 		}
 		*/
 		glDisable(GL_NORMALIZE);
+		glDisable(GL_TEXTURE_2D);
 	}
 
 	void Model::render(bool withBoundingBox) const

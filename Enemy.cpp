@@ -95,14 +95,9 @@ void Enemy::update(Player *p, float deltaTime){
 
 
 
-		externalForce.x *= 0.75f;
-		externalForce.y *= 0.75f;
+		externalForce.x *= 0.90f;
+		externalForce.y *= 0.90f;
 
-		if (externalForce.x <= 0.05f)
-			externalForce.x = 0;
-
-		if (externalForce.y <= 0.05f)
-			externalForce.y = 0;
 
 		updateBoxes();
 	}
@@ -183,6 +178,7 @@ void Enemy::newRandomWalkToPos(){
 void Enemy::renderMesh(){
 	glPushMatrix();
 	glTranslated(pos.x, -15, pos.z);
+	glRotatef( (anguloDir + 20 ), 0.0, 1.0, 0.0);
 	mesh->Render();
 
 	glPopMatrix();

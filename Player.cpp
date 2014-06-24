@@ -1,5 +1,7 @@
 #include "Player.h"
 #include "Enemy.h"
+#include "Point.h"
+#include "Model.h"
 
 Player::Player(XYZ &p)
 {
@@ -26,9 +28,14 @@ Player::Player(XYZ &p)
 	boundingBox = Rect(p.x - BOUNDING_BOX_SIZE / 2.0f, p.z - BOUNDING_BOX_SIZE / 2.0f, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE);
 	repelCircle = Circle(pos.x, pos.z, REPEL_SIZE / 2);
 	attackCircle = Circle(pos.x, pos.z, ATTACK_RADIUS / 2);
+
+	mesh = new mar::Model();
+	mesh->load("Content/models/", "android.obj", "android.mtl");
 }
 
 void Player::update(bool *keys, float deltaTime){
+	updateBullets(deltaTime);
+
 	repelEntities();
 
 	processEventKeys();
@@ -49,6 +56,7 @@ void Player::update(bool *keys, float deltaTime){
 	}
 
 	updateBoxes();
+
 }
 
 void Player::processEventKeys(){
@@ -169,6 +177,7 @@ void Player::headbob(float d){
 
 void Player::attack(Entity *e, float dmg){
 	long t = currentTimeMillis();
+	e->receiveDamage(dmg);
 // 	if (t - lastAttackTime > ATTACK_DELAY){
 // 		e->receiveDamage(dmg);
 // 		lastAttackTime = t;
@@ -176,12 +185,22 @@ void Player::attack(Entity *e, float dmg){
 }
 
 void Player::render(){
-	camera->render();
+	//camera->render();
 
 	if (currentlyUsing == FORCE_FIELD)
 		DrawCircle(pos.x, pos.z, 2, REPEL_SIZE / 2.0, 20, RGBf(0, 0, 1));
 
 	// TODO player model
+	if (!camera->firstPerson){
+		glPushMatrix();
+		glTranslatef(0, -50, 0);
+		glRotatef(180, 0, 1, 0);
+		mesh->render(false);
+		glPopMatrix();
+	}
+
+	
+	
 }
 
 Player::~Player()
@@ -224,3 +243,60 @@ void Player::repelF(Entity *e){
 	ee->setAir(true);
 }
 
+void Player::shoot(){
+	long curTime = currentTimeMillis();
+
+	if (curTime - lastShootTime > SHOOT_DELAY){
+		
+		Bullet b;
+		b.pos.x = pos.x;
+		b.pos.y = pos.y + camera->HEAD_HEIGHT;
+		b.pos.z = pos.z;
+		b.xRot = camera->xRotation;
+		b.yRot = camera->yRotation;
+
+		bullets.push_back(b);
+	}
+}
+
+void Player::updateBullets(float deltaTime){
+
+	std::vector<Bullet>::iterator it = bullets.begin();
+	while (it != bullets.end())	{
+		Circle c = Circle(it->pos.x, it->pos.z, 30);
+
+		float YRotationRadius = (it->yRot / 180 * PI);
+		float XRotationRadius = (it->xRot / 180 * PI);
+
+		it->pos.x += float(sin(YRotationRadius)) * BULLET_SPEED * deltaTime;
+		it->pos.z -= float(cos(YRotationRadius)) * BULLET_SPEED * deltaTime;
+		it->pos.y -= float(sin(XRotationRadius)) * BULLET_SPEED * deltaTime;
+
+		bool a = false;
+		if (it->pos.y < 100){
+			std::vector<Entity*> closeBy = quad->queryRange(c);
+			for (unsigned int i = 0; a == false && i < closeBy.size(); i++){
+
+				if (!closeBy[i]->isPlayer()){
+					this->attack(closeBy[i], 50);
+					a = true;
+				}
+			}
+		}
+
+		if (it->pos.y < -10 || a)
+			it = bullets.erase(it);
+		else
+			++it;
+	}
+}
+
+void Player::drawBullets(){
+	for (unsigned int i = 0; i < bullets.size(); i++){
+		glPushMatrix();
+		glColor3f(1, 0, 0);
+		glTranslated(bullets[i].pos.x, bullets[i].pos.y, bullets[i].pos.z);
+		glutSolidSphere(1, 10, 10);
+		glPopMatrix();
+	}
+}

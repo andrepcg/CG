@@ -126,7 +126,7 @@ bool Mesh::InitFromScene(const aiScene* pScene, const string& Filename)
 	Indices.reserve(NumIndices);
 
 	//textura = (GLfloat *)malloc(NumVertices * sizeof(GLfloat) * 2);
-	textura = new GLfloat[NumVertices * 2];
+	//textura = new GLfloat[NumVertices * 2];
 
 	// Initialize the meshes in the scene one by one
 	for (unsigned int i = 0; i < m_Entries.size(); i++) {
@@ -179,8 +179,8 @@ void Mesh::InitMesh(const aiMesh* paiMesh,
 		Normals.push_back(Vector3f(pNormal->x, pNormal->y, pNormal->z));
 		TexCoords.push_back(Vector2f(pTexCoord->x, pTexCoord->y));
 
-		textura[i * 2] = pTexCoord->x;
-		textura[i * 2 + 1] = pTexCoord->y;
+// 		textura[i * 2] = pTexCoord->x;
+// 		textura[i * 2 + 1] = pTexCoord->y;
 	}
 
 	// Populate the index buffer
@@ -248,37 +248,11 @@ bool Mesh::InitMaterials(const aiScene* pScene, const string& Filename)
 }
 
 
-void Mesh::Render()
-{
-	glEnable(GL_TEXTURE_2D);
-	
-	glBindVertexArray(m_VAO);
-
-	for (unsigned int i = 0; i < m_Entries.size(); i++) {
-		const unsigned int MaterialIndex = m_Entries[i].MaterialIndex;
-
-		assert(MaterialIndex < m_Textures.size());
-
-		if (m_Textures[MaterialIndex]) {
-			m_Textures[MaterialIndex]->Bind(GL_TEXTURE0, NULL);
-		}
-
-		glDrawElementsBaseVertex(GL_TRIANGLES,m_Entries[i].NumIndices,GL_UNSIGNED_INT,(void*)(sizeof(unsigned int) * m_Entries[i].BaseIndex), m_Entries[i].BaseVertex);
-
-	}
-
-	// Make sure the VAO is not changed from the outside    
-	glBindVertexArray(0);
-
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	
-}
-
-
 // void Mesh::Render()
 // {
-// 
+// 	glEnable(GL_TEXTURE_2D);
+// 	
+// 	glBindVertexArray(m_VAO);
 // 
 // 	for (unsigned int i = 0; i < m_Entries.size(); i++) {
 // 		const unsigned int MaterialIndex = m_Entries[i].MaterialIndex;
@@ -289,27 +263,53 @@ void Mesh::Render()
 // 			m_Textures[MaterialIndex]->Bind(GL_TEXTURE0, NULL);
 // 		}
 // 
-// 		glEnableClientState(GL_VERTEX_ARRAY);
-// 		glEnableClientState(GL_NORMAL_ARRAY);
-// 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-// 
-// 		// Bind Buffers
-// 		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[NORMAL_VB]);
-// 		glNormalPointer(GL_FLOAT, 0, NULL);
-// 
-// 		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[TEXCOORD_VB]);
-// 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-// 
-// 		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[POS_VB]);
-// 		glVertexPointer(3, GL_FLOAT, 0, NULL);
-// 
-// 		//Render the triangles
-// 		glDrawArrays(GL_TRIANGLES, 0, m_Entries[i].NumIndices);
-// 
-// 		glDisableClientState(GL_VERTEX_ARRAY);
-// 		glDisableClientState(GL_NORMAL_ARRAY);
-// 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+// 		glDrawElementsBaseVertex(GL_TRIANGLES,m_Entries[i].NumIndices,GL_UNSIGNED_INT,(void*)(sizeof(unsigned int) * m_Entries[i].BaseIndex), m_Entries[i].BaseVertex);
 // 
 // 	}
 // 
+// 	// Make sure the VAO is not changed from the outside    
+// 	glBindVertexArray(0);
+// 
+// 
+// 	glBindTexture(GL_TEXTURE_2D, 0);
+// 	
 // }
+
+
+void Mesh::Render()
+{
+
+
+	for (unsigned int i = 0; i < m_Entries.size(); i++) {
+		const unsigned int MaterialIndex = m_Entries[i].MaterialIndex;
+
+		assert(MaterialIndex < m_Textures.size());
+
+		if (m_Textures[MaterialIndex]) {
+			m_Textures[MaterialIndex]->Bind(GL_TEXTURE0, NULL);
+		}
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		// Bind Buffers
+		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[NORMAL_VB]);
+		glNormalPointer(GL_FLOAT, 0, NULL);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[TEXCOORD_VB]);
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[POS_VB]);
+		glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+		//Render the triangles
+		glDrawArrays(GL_TRIANGLES, 0, m_Entries[i].NumIndices);
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	}
+
+}

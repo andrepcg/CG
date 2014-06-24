@@ -175,18 +175,21 @@ void GameManager::drawMission(){
 }
 
 void GameManager::DrawEntities() {
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glColor3f(1.0, 1.0, 1.0);
 
-
-	if (performance)
-		for (unsigned int i = 0; i < entities.size(); i++)
+	if (performance){
+		for (unsigned int i = 0; i < entities.size(); i++){
 			if (entities[i]->isDead() == false)
 				entities[i]->renderCube();
-	else
-		for (unsigned int i = 0; i < entities.size(); i++)
+		}
+	}
+	else{
+		for (unsigned int i = 0; i < entities.size(); i++){
 			if (entities[i]->isDead() == false)
 				entities[i]->renderMesh();
-
+		}
+	}
 
 	if (drawCollisionCircle)
 		for (unsigned int i = 0; i < entities.size(); i++)
@@ -196,5 +199,5 @@ void GameManager::DrawEntities() {
 		for (unsigned int i = 0; i < entities.size(); i++)
 			DrawCircle(entities[i]->playerLOS.x, entities[i]->playerLOS.y, 0, entities[i]->playerLOS.radius, 20, RGBf(1.0, 1.0, 0.0));
 
-
+	player->drawBullets();
 }

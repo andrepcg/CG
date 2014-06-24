@@ -27,7 +27,8 @@ enum SkyTexture
 	SKYDOWN,
 	SKYFRONT,
 	SKYBACK,
-	CRATE
+	CRATE,
+	RELVA
 };
 
 

@@ -115,6 +115,7 @@ void Entity::repel(Entity *e){
 
 void Entity::receiveDamage(float d){
 	health -= d;
+	std::cout << "Dano " << d << std::endl;
 }
 
 float Entity::getHealth(){

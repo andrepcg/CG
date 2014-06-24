@@ -19,11 +19,12 @@ void Camera::render(){
 	if (firstPerson){
 		glRotatef(xRotation, 1.0, 0.0, 0.0);
 		glRotatef(yRotation, 0.0, 1.0, 0.0);
+		player->render();
 	}
 	else{
 		glTranslatef(0.0f, 20.0f, -radius);
 		glRotatef(xRotation, 1.0, 0.0, 0.0);
-		//DrawPlayer();
+		player->render();
 		glRotatef(yRotation, 0.0, 1.0, 0.0);
 	}
 
