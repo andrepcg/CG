@@ -34,7 +34,7 @@ private:
 	int waitBeforeNewDestination;
 	long destinationReachedMS;
 	const int PLAYER_LOS_RADIUS = 800;
-	float MAX_SPEED = 80;
+	float MAX_SPEED = 40;
 
 	const int BASE_HEALTH = 100;
 	

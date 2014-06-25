@@ -402,9 +402,9 @@ namespace mar
 			OBJFace& face = object_.faces.at(i);
 			OBJMaterial& material = object_.materials[face.material];
 
-			glMaterialfv( GL_FRONT, GL_AMBIENT,  material.Ka );
-			glMaterialfv( GL_FRONT, GL_DIFFUSE,  material.Kd );
-			glMaterialfv( GL_FRONT, GL_SPECULAR, material.Ks );
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material.Ka);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material.Kd);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material.Ks);
 
 			glBindTexture(GL_TEXTURE_2D, material.texture);
 

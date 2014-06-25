@@ -178,7 +178,7 @@ void Enemy::newRandomWalkToPos(){
 	walkToPos = Rect(randInt(0, 8192) - 25, randInt(0, 8192) - 25, 50, 50);
 }
 
-float cubeSize = 20;
+float cubeSize = 30;
 
 void Enemy::renderMesh(){
 	/*

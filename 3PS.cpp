@@ -104,7 +104,7 @@ void resetPerspectiveProjection() {
 GLfloat dark[4] = { 0.0, 0.0, 0.0, 1.0 };
 GLfloat normal[4] = { 0.5, 0.5, 0.5, 1.0 };
 GLfloat bright[4] = { 1.0, 1.0, 1.0, 1.0 };
-GLfloat sunPos[4] = { -1000, 500.0, -100, 1.0 };
+GLfloat sunPos[4] = { -1000, 500.0, -100, 0.0 };
 GLfloat light1_ambient[] = { 0.8, 0.8, 0.8, 1.0 };
 GLfloat lampPos[] = { 100, 100, 100, 1 };
 GLfloat lampCorAmb[] = { 0.1, 0.1, 0.1, 1.0 };
@@ -112,6 +112,8 @@ GLfloat lampCorEsp[] = { 1.0, 1.0, 1.0, 1.0 };
 GLfloat lampCorDif[] = { 1.0, 1.0, 1.0, 1.0 };
 
 GLfloat sunsetColor[4] = { 0.98, 0.834, 0.647, 1.0 };
+
+const int groundTesselation = 128;
 
 void Enables(void){
 
@@ -201,10 +203,17 @@ void DrawQuadTree(QuadTree* tree)
 
 vector<Tree> trees;
 Mesh *arvore;
+float terrainHeight[groundTesselation][groundTesselation];
 
 void initGame(void){
 
 	srand(time(NULL));
+
+	for (int z = 0; z < groundTesselation; z++){
+		for (int x = 0; x < groundTesselation; x++){
+			terrainHeight[z][x] = (rand() / (float)RAND_MAX) * -10;
+		}
+	}
 
 	
 	player = new Player(XYZ(100, 0, 100));
@@ -282,9 +291,9 @@ const char *vel =  "Speed:  %.1f";
 const char *ataq = "Attack: %.1f";
 const char *jmp =  "Jump:   %.1f";
 
-const char *jde = "(Z) JDE: %d";
-const char *ff = "(X) FF: %d";
-const char *crate = "(C) BOX: %d";
+const char *jde = "(Z)JDE: %d";
+const char *ff = "(X)FF: %d";
+const char *crate = "(C)BOX: %d";
 
 
 void DrawHUD(){
@@ -323,12 +332,25 @@ void DrawHUD(){
 	renderBitmapString(10, 590, updatet, RGBf(1.0f, 1.0f, 0.0f));
 
 	sprintf(updatet, ff, player->itemInventory[FORCE_FIELD]);
-	renderBitmapString(110, 590, updatet, RGBf(1.0f, 1.0f, 0.0f));
+	renderBitmapString(120, 590, updatet, RGBf(1.0f, 1.0f, 0.0f));
 
 	sprintf(updatet, crate, player->itemInventory[BOX_CRATE]);
-	renderBitmapString(200, 590, updatet, RGBf(1.0f, 1.0f, 0.0f));
+	renderBitmapString(210, 590, updatet, RGBf(1.0f, 1.0f, 0.0f));
+
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glBegin(GL_LINES);
+	glVertex2f(width / 2.0 - 5, height / 2.0);
+	glVertex2f(width / 2.0 + 5, height / 2.0);
+	glVertex2f(width / 2.0, height / 2.0 - 5);
+	glVertex2f(width / 2.0, height / 2.0 + 5);
+	glEnd();
 	
 	glPopMatrix();
+
+
+	
+
+
 	resetPerspectiveProjection();
 
 	
@@ -474,26 +496,25 @@ void meshFace(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat altura, GLfloat 
 
 			glBegin(GL_POLYGON);
 			glTexCoord2f(0.0f + textureLargura*i, 0.0f + textureAltura*j);
-			glVertex3f(posX + meshLargura*i, posY, posZ + meshAltura*j);
+			glVertex3f(posX + meshLargura*i, terrainHeight[i][j], posZ + meshAltura*j);
 
 			glTexCoord2f(0.0f + textureLargura*(i), 0.0f + textureAltura*(j + 1));
-			glVertex3f(posX + meshLargura*(i), posY, posZ + meshAltura*(j + 1));
+			glVertex3f(posX + meshLargura*(i), terrainHeight[i][j + 1], posZ + meshAltura*(j + 1));
 
 			glTexCoord2f(0.0f + textureLargura*(i + 1), 0.0f + textureAltura*(j + 1));
-			glVertex3f(posX + meshLargura*(i + 1), posY, posZ + meshAltura*(j + 1));
+			glVertex3f(posX + meshLargura*(i + 1), terrainHeight[i + 1][j + 1], posZ + meshAltura*(j + 1));
 
 			glTexCoord2f(0.0f + textureLargura*(i + 1), 0.0f + textureAltura*j);
-			glVertex3f(posX + meshLargura*(i + 1), posY, posZ + meshAltura*j);
+			glVertex3f(posX + meshLargura*(i + 1), terrainHeight[i + 1][j], posZ + meshAltura*j);
 			glEnd();
 
 		}
 	}
 }
 
-void drawGroundMesh(float x, float y, float z, float width, float length, int tesselation){
 
-	float xSize = width / tesselation;
-	float zSize = length / tesselation;
+
+void drawGroundMesh(int tesselation){
 
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glColor3f(1.0, 1.0, 1.0);
@@ -502,7 +523,7 @@ void drawGroundMesh(float x, float y, float z, float width, float length, int te
 
 	glBindTexture(GL_TEXTURE_2D, texturas[RELVA]);
 
-	meshFace(0, -10, 0, 8192, 8192, 32, 0, 1, 0);
+	meshFace(-2048, -10, -2048, 12288, 12288, 32, 0, 1, 0);
 
 
 }
@@ -606,12 +627,12 @@ void render(){
 		drawCrate(crates[i].x, -10, crates[i].y, 64, 64, 64);
 
 	gameManager->DrawEntities();
+	gameManager->drawMission();
 
 	// ground
-	glDisable(GL_LIGHTING);
- 	//drawFilledRect(0, -10, 0, 8192, 8192, RGBf(0.5, 0.5, 0.5));
-	drawGroundMesh(0, -10 , 0, 8192, 8192, 64);
-	glEnable(GL_LIGHTING);
+	//glDisable(GL_LIGHTING);
+	drawGroundMesh(groundTesselation);
+	//glEnable(GL_LIGHTING);
 
  	//drawCollisionGrid();
 
@@ -619,13 +640,13 @@ void render(){
 	for (unsigned int i = 0; i < trees.size(); i++)
 		drawTree(trees[i]);
 	
-	gameManager->drawMission();
+	
 
 	debugRender();
 	
 	drawSkybox(0, 0, 0, 20000, 20000, 20000);
 
-	// TODO desenhar palavras tem problemas de performance
+
 	DrawHUD();
 	
 	glfwSwapBuffers(window);
@@ -713,31 +734,33 @@ void initGL(){
 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	/*
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(70, ratio, 1.0, 20000.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	*/
+	
 
 	projeccao.FOV = 75;
 	projeccao.Height = height;
 	projeccao.Width = width;
-	projeccao.zFar = 20000;
+	projeccao.zFar = 40000;
 	projeccao.zNear = 1;
+
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(projeccao.FOV, projeccao.Width / projeccao.Height, 1.0, projeccao.zFar);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
 
 	// The following code is a fancy bit of math that is equivalent to calling:
 	// gluPerspective(fieldOfView/2.0f, width/height , near, far);
 	// We do it this way simply to avoid requiring glu.h
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	GLfloat aspectRatio = (width > height) ? projeccao.Width / projeccao.Height : projeccao.Height / float(width);
-	GLfloat fH = tan(float(projeccao.FOV / 360.0f * PI)) * projeccao.zNear;
-	GLfloat fW = fH * aspectRatio;
-	glFrustum(-fW, fW, -fH, fH, projeccao.zNear, projeccao.zFar);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+// 	glMatrixMode(GL_PROJECTION);
+// 	glLoadIdentity();
+// 	GLfloat aspectRatio = (width > height) ? projeccao.Width / projeccao.Height : projeccao.Height / float(width);
+// 	GLfloat fH = tan(float(projeccao.FOV / 360.0f * PI)) * projeccao.zNear;
+// 	GLfloat fW = fH * aspectRatio;
+// 	glFrustum(-fW, fW, -fH, fH, projeccao.zNear, projeccao.zFar);
+// 	glMatrixMode(GL_MODELVIEW);
+// 	glLoadIdentity();
 
 	
 

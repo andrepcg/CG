@@ -20,15 +20,17 @@ void Camera::render(){
 		glRotatef(xRotation, 1.0, 0.0, 0.0);
 		glRotatef(yRotation, 0.0, 1.0, 0.0);
 		player->render();
+		glTranslatef(-player->getPos().x, -player->getPos().y - HEAD_HEIGHT, -player->getPos().z);
 	}
 	else{
 		glTranslatef(0.0f, 20.0f, -radius);
 		glRotatef(xRotation, 1.0, 0.0, 0.0);
 		player->render();
 		glRotatef(yRotation, 0.0, 1.0, 0.0);
+		glTranslatef(-player->getPos().x, -HEAD_HEIGHT, -player->getPos().z);
 	}
 
-	glTranslatef(-player->getPos().x, -player->getPos().y - HEAD_HEIGHT, -player->getPos().z);
+
 }
 
 void Camera::mouseControl(GLFWwindow *win, double x, double y){

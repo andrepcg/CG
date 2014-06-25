@@ -25,7 +25,7 @@ GameManager::GameManager(Rect gameBounds, Player *p){
 	tesouro = new mar::Model();
 	tesouro->load("Content/models/", "treasure_chest.obj", "treasure_chest.mtl");
 
-	for (int i = 0; i < 1; i++){
+	for (int i = 0; i < 200; i++){
 		entities.push_back(createEntity());
 	}
 
@@ -160,8 +160,22 @@ void GameManager::newRandomMission(){
 
 }
 
+GLfloat mat_specular[] = { 0.3, 1.0, 0.3, 1.0 };
+GLfloat mat_shininess[] = { 50.0 };
+GLfloat spotDir[] = { 0, -1, 0 };
+
 void GameManager::drawMission(){
 	if (estado == WAITING_FOR_MISSION_COMPLETE){
+
+		GLfloat light_position[] = { missionObjective.x, 1000, missionObjective.y, 1.0 };
+
+		glEnable(GL_LIGHT1);
+		glLightfv(GL_LIGHT1, GL_SPECULAR, mat_specular);
+		glLightfv(GL_LIGHT1, GL_POSITION, light_position);
+		glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
+		glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 90.0);
+		glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotDir);
+
 		DrawCircle(missionObjective.x, missionObjective.y, 1, missionObjective.radius, 32, RGBf(1, 0, 0));
 		glPushMatrix();
 

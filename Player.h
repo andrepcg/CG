@@ -58,6 +58,7 @@ public:
 	void drawBullets();
 	void renderForceField();
 
+
 private:
 	void updateBoxes();
 	void move(bool *keys, float deltaTime);
