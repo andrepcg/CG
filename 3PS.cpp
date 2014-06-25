@@ -228,10 +228,12 @@ void initGame(void){
 
 	player->camera = camera;
 
-	char *nomesTex[] = { "Content/SunSetRight2048.png", "Content/SunSetLeft2048.png", "Content/SunSetUp2048.png", "Content/SunSetDown2048.png", "Content/SunSetFront2048.png", "Content/SunSetBack2048.png", "Content/crate.jpg", "Content/sand.jpg" };
+	char *nomesTex[] = { "Content/SunSetRight2048.png", "Content/SunSetLeft2048.png", "Content/SunSetUp2048.png",
+						 "Content/SunSetDown2048.png", "Content/SunSetFront2048.png", "Content/SunSetBack2048.png",
+						 "Content/crate.jpg", "Content/sand.jpg", "Content/high_grass.png" };
 	
-	for (int i = 0; i < 8; i++)
-		loadTexture(nomesTex[i], 0, texturas, i);
+	for (int i = 0; i < 9; i++)
+		loadTexture(nomesTex[i], 1, texturas, i);
 
 	treeModel = new mar::Model();
 	treeModel->load("Content/models/", "arvore.obj", "arvore.mtl");
@@ -249,13 +251,6 @@ void initGame(void){
 		gameManager->collisionGrid->setCell(x, z, BLOCKED);
 	}
 
-// 	for (int z = 0; z < bounds.h; z++){
-// 		for (int x = 0; x < bounds.w; x++){
-// 			float r = randInt(0, )
-// 			if (r < 0.05)
-// 				trees.push_back(Tree(x, z, randInt());
-// 		}
-// 	}
 }
 
 void DrawPlayer(){
@@ -611,6 +606,73 @@ void debugRender(){
 	}
 }
 
+void drawHighGrass(){
+	glDisable(GL_LIGHTING);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glColor4f(1.0, 1.0, 1.0, 0.95);
+
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+	glAlphaFunc(GL_GREATER, 0.5);
+	glEnable(GL_ALPHA_TEST);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texturas[HIGH_GRASS]);
+
+	glCullFace(GL_FRONT);
+
+	glPushMatrix();
+	//glTranslatef(1000, 0, 1000);
+	glScalef(1, 1.5, 1);
+
+	glPushMatrix();
+	
+	glTranslatef(-100 / 2, -10, 0);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(100, 0, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(100, 40, 0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0, 40, 0);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(100, 0, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0, 40, 0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(100, 40, 0);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	//glTranslatef(1000, 0, 1000);
+	glTranslatef(0, -10, -100 / 2);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0, 0, 100);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0, 40, 100);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0, 40, 0);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, 0, 100);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0, 40, 0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0, 40, 100);
+	glEnd();
+
+	glPopMatrix();
+	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+
+	glCullFace(GL_BACK);
+
+}
+
 
 void render(){
 
@@ -636,6 +698,7 @@ void render(){
 
  	//drawCollisionGrid();
 
+	
 
 	for (unsigned int i = 0; i < trees.size(); i++)
 		drawTree(trees[i]);
@@ -646,6 +709,7 @@ void render(){
 	
 	drawSkybox(0, 0, 0, 20000, 20000, 20000);
 
+	drawHighGrass();
 
 	DrawHUD();
 	
@@ -769,6 +833,7 @@ void initGL(){
 	glEnable(GL_DEPTH_TEST); 
 	glClearDepth(1.0f);
 	glDepthFunc(GL_LEQUAL);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glEnable(GL_CULL_FACE);

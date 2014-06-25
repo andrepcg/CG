@@ -19,7 +19,7 @@
 #include "Estruturas.h"
 #include "OpenGLincludes.h"
 
-enum SkyTexture
+enum Texturas
 {
 	SKYRIGHT,
 	SKYLEFT,
@@ -28,7 +28,8 @@ enum SkyTexture
 	SKYFRONT,
 	SKYBACK,
 	CRATE,
-	RELVA
+	RELVA,
+	HIGH_GRASS
 };
 
 

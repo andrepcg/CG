@@ -181,7 +181,7 @@ void Enemy::newRandomWalkToPos(){
 float cubeSize = 30;
 
 void Enemy::renderMesh(){
-	/*
+
 	glPushMatrix();
 	glTranslated(pos.x, -15, pos.z);
 	glRotatef( (anguloDir + 20 ), 0.0, 1.0, 0.0);
@@ -189,59 +189,8 @@ void Enemy::renderMesh(){
 
 	glPopMatrix();
 
-	*/
 
 
-	glEnable(GL_TEXTURE_2D);
-	tex->Bind(GL_TEXTURE_2D, NULL);
-	glPushMatrix();
-
-	glTranslatef(pos.x, pos.y, pos.z);
-
-	glRotatef((v.x >= 0) ? -anguloDir + 180 : -anguloDir, 0.0, 1.0, 0.0);
-
-	glTranslatef(-cubeSize / 2, 0, -cubeSize / 2);
-
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(0, 0, 0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0, 0, cubeSize);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0, cubeSize, cubeSize);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, cubeSize, 0);
-	glEnd();
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.1f); glVertex3f(0, 0, cubeSize);
-	glTexCoord2f(0.1f, 0.1f); glVertex3f(cubeSize, 0, cubeSize);
-	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, cubeSize, cubeSize);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, cubeSize, cubeSize);
-	glEnd();
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.1f); glVertex3f(cubeSize, 0, cubeSize);
-	glTexCoord2f(0.1f, 0.1f); glVertex3f(cubeSize, 0, 0);
-	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, cubeSize, 0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(cubeSize, cubeSize, cubeSize);
-	glEnd();
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.1f); glVertex3f(0, cubeSize, 0);
-	glTexCoord2f(0.1f, 0.1f); glVertex3f(cubeSize, cubeSize, 0);
-	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, 0, 0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0, 0, 0);
-	glEnd();
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.1f); glVertex3f(0, cubeSize, 0);
-	glTexCoord2f(0.1f, 0.1f); glVertex3f(0, cubeSize, cubeSize);
-	glTexCoord2f(0.1f, 0.0f); glVertex3f(cubeSize, cubeSize, cubeSize);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(cubeSize, cubeSize, 0);
-	glEnd();
-
-	glPopMatrix();
-
-
-	glDisable(GL_TEXTURE_2D);
 	
 }
 

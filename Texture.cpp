@@ -36,7 +36,7 @@ Texture::Texture(GLenum TextureTarget, const std::string& FileName)
 bool Texture::Load()
 {
 
-	image_data = stbi_load(m_fileName.c_str(), &image_width, &image_height, &image_pixel_components, 0);
+	image_data = stbi_load(m_fileName.c_str(), &image_width, &image_height, &image_pixel_components, 4);
 
 	if (image_data == NULL){
 		std::cout << "Error loading texture '" << m_fileName << std::endl;
@@ -56,7 +56,7 @@ bool Texture::Load()
 
 
 
-	glTexImage2D(m_textureTarget, 0, GL_RGB, image_width, image_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
+	glTexImage2D(m_textureTarget, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 	//stbi_image_free(image_data);
 	return true;
 }

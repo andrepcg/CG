@@ -72,7 +72,7 @@ void loadTexture(char *filename, int tipo, GLuint textureArray[], int index){
 		return;
 
 	int w, h, n;
-	unsigned char* imagem = stbi_load(filename, &w, &h, &n, 0);
+	unsigned char* imagem = stbi_load(filename, &w, &h, &n, 4);
 
 	if (imagem == NULL){
 		std::cout << "Error loading texture '" << filename << std::endl;
@@ -82,11 +82,12 @@ void loadTexture(char *filename, int tipo, GLuint textureArray[], int index){
 	glGenTextures(1, &textureArray[index]);
 	glBindTexture(GL_TEXTURE_2D, textureArray[index]);
 	if (tipo == 1){
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, imagem);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, imagem);
 	}
 	else{
 		GLint ani;
@@ -97,8 +98,8 @@ void loadTexture(char *filename, int tipo, GLuint textureArray[], int index){
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ani);
-
-		gluBuild2DMipmaps(GL_TEXTURE_2D, 3, w, h, GL_RGB, GL_UNSIGNED_BYTE, imagem);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		gluBuild2DMipmaps(GL_TEXTURE_2D, 3, w, h, GL_RGBA, GL_UNSIGNED_BYTE, imagem);
 	}
 
 	stbi_image_free(imagem);

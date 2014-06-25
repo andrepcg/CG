@@ -192,18 +192,13 @@ void GameManager::DrawEntities() {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glColor3f(1.0, 1.0, 1.0);
 
-	if (performance){
+
 		for (unsigned int i = 0; i < entities.size(); i++){
 			if (entities[i]->isDead() == false)
 				entities[i]->renderCube();
 		}
-	}
-	else{
-		for (unsigned int i = 0; i < entities.size(); i++){
-			if (entities[i]->isDead() == false)
-				entities[i]->renderMesh();
-		}
-	}
+	
+
 
 	if (drawCollisionCircle)
 		for (unsigned int i = 0; i < entities.size(); i++)
